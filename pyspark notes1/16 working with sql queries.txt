@@ -1,0 +1,483 @@
+
+
+workinng with sql queries:
+-------------------------
+
+for working with sql queries,Register Dataframe as table and then we can
+perform all valid sql queries on it
+
+To Register DF as a table---->we have 2 ways
+1.df.registerTempTable("tablename")
+or
+2.sqlContext.registerDataFrameAsTable(df,"tablename")
+  and then say
+  sqlContext.sql(".........sql query............").show()
+
+ex:
+>>> #step 1:Loading a file and creating a RDD
+... 
+>>> r1=sc.textFile("hdfs://localhost:9000/pyspark630pm/emp1.txt")
+>>> r1.collect()
+[u'101,Miller,10000,m,11', u'102,Blake,20000,m,12', u'103,Sony,30000,f,11', u'104,Sita,40000,f,12', u'105,James,50000,m,13']
+>>> r2=r1.map(lambda x:x.split(","))
+>>> r2.collect()
+[[u'101', u'Miller', u'10000', u'm', u'11'], [u'102', u'Blake', u'20000', u'm', u'12'], [u'103', u'Sony', u'30000', u'f', u'11'], [u'104', u'Sita', u'40000', u'f', u'12'], [u'105', u'James', u'50000', u'm', u'13']]
+>>> from pyspark.sql import Row
+>>> r3=r2.map(lambda x:Row(eid=int(x[0]),ename=x[1],sal=int(x[2]),
+... sex=x[3],dno=int(x[4])))
+>>> r3.collect()
+[Row(dno=11, eid=101, ename=u'Miller', sal=10000, sex=u'm'), Row(dno=12, eid=102, ename=u'Blake', sal=20000, sex=u'm'), Row(dno=11, eid=103, ename=u'Sony', sal=30000, sex=u'f'), Row(dno=12, eid=104, ename=u'Sita', sal=40000, sex=u'f'), Row(dno=13, eid=105, ename=u'James', sal=50000, sex=u'm')]
+
+>>> df=spark.createDataFrame(r3)
+>>> df.show()
++---+---+------+-----+---+
+|dno|eid| ename|  sal|sex|
++---+---+------+-----+---+
+| 11|101|Miller|10000|  m|
+| 12|102| Blake|20000|  m|
+| 11|103|  Sony|30000|  f|
+| 12|104|  Sita|40000|  f|
+| 13|105| James|50000|  m|
++---+---+------+-----+---+
+
+I-way:
+>>> df.registerTempTable("emp")
+>>> e1=sqlContext.sql("select * from emp") #The result of sqlquery is also a df
+>>> e1.show()
++---+---+------+-----+---+
+|dno|eid| ename|  sal|sex|
++---+---+------+-----+---+
+| 11|101|Miller|10000|  m|
+| 12|102| Blake|20000|  m|
+| 11|103|  Sony|30000|  f|
+| 12|104|  Sita|40000|  f|
+| 13|105| James|50000|  m|
++---+---+------+-----+---+
+
+II-way:
+------
+>>> sqlContext.registerDataFrameAsTable(df,"emp2")
+>>> e2=sqlContext.sql("select * from emp2")
+>>> e2.show()
++---+---+------+-----+---+
+|dno|eid| ename|  sal|sex|
++---+---+------+-----+---+
+| 11|101|Miller|10000|  m|
+| 12|102| Blake|20000|  m|
+| 11|103|  Sony|30000|  f|
+| 12|104|  Sita|40000|  f|
+| 13|105| James|50000|  m|
++---+---+------+-----+---+
+
+HDFSfile----->RDD---->DF---->table--->sqlquery(DF)
+
+-----------------------------------------------------------------------------------
+adding extra column
+
+>>> tax_add_df=sqlContext.sql("select *,sal*0.10 as tax from emp2").show()
++---+---+------+-----+---+-------+
+|dno|eid| ename|  sal|sex|    tax|
++---+---+------+-----+---+-------+
+| 11|101|Miller|10000|  m|1000.00|
+| 12|102| Blake|20000|  m|2000.00|
+| 11|103|  Sony|30000|  f|3000.00|
+| 12|104|  Sita|40000|  f|4000.00|
+| 13|105| James|50000|  m|5000.00|
++---+---+------+-----+---+-------+
+
+-----------------------------------------------------------------------------------
+#Case 1: Single grouping and single aggregation
+
+>>> singlegrp_aggr=sqlContext.sql("select sex,sum(sal) from emp2 group by sex").show()
+
+o/p:
++---+--------+ 
+|sex|sum(sal)|
++---+--------+
+|  m|   80000|
+|  f|   70000|
++---+--------+
+
+
+----------------------------------------------------------------------------------
+Case 2: Multigrouping and single Aggregation
+
+dnowise,sexwise----->sum(sal)
+
+>>> multigrp=sqlContext.sql("select dno,sex,sum(sal) from emp2 group by dno,sex").show()
++---+---+--------+
+|dno|sex|sum(sal)|
++---+---+--------+
+| 12|  f|   40000|
+| 12|  m|   20000|
+| 11|  f|   30000|
+| 13|  m|   50000|
+| 11|  m|   10000|
++---+---+--------+
+
+----------------------------------------------------------------------------------
+Case 3: Single Grouping and multiple aggregation
+
+>>> multiaggr=sqlContext.sql("select dno,sum(sal),avg(sal),max(sal),min(sal),
+   count(*) from emp2 group by dno").show()
+
+o/p:
++---+--------+--------+--------+--------+--------+
+|dno|sum(sal)|avg(sal)|max(sal)|min(sal)|count(1)|
++---+--------+--------+--------+--------+--------+
+| 12|   60000| 30000.0|   40000|   20000|       2|
+| 11|   40000| 20000.0|   30000|   10000|       2|
+| 13|   50000| 50000.0|   50000|   50000|       1|
++---+--------+--------+--------+--------+--------+
+
+------------------------------------------------------------------------------------
+case 4: Multigrouping and multiple aggregation:
+
+>>> multigrp_aggr=sqlContext.sql("select dno,sex,sum(sal),avg(sal),max(sal),
+    min(sal),count(*) from emp2 group by dno,sex").show()
+
++---+---+--------+--------+--------+--------+--------+
+|dno|sex|sum(sal)|avg(sal)|max(sal)|min(sal)|count(1)|
++---+---+--------+--------+--------+--------+--------+
+| 12|  f|   40000| 40000.0|   40000|   40000|       1|
+| 12|  m|   20000| 20000.0|   20000|   20000|       1|
+| 11|  f|   30000| 30000.0|   30000|   30000|       1|
+| 13|  m|   50000| 50000.0|   50000|   50000|       1|
+| 11|  m|   10000| 10000.0|   10000|   10000|       1|
++---+---+--------+--------+--------+--------+--------+
+---------------------------------------------------------------------------------------------------------------
+joins:
+
+Task: Citywise------>I want the total sal budget
+
+>>> #Step 1: Loading both emp and dept from HDFS
+... 
+>>> r1=sc.textFile("hdfs://localhost:9000/pyspark630pm/emps1")
+>>> r1.collect()
+[u'101,aaa,1000,m,11', u'102,bbb,2000,f,12', u'103,ccc,3000,m,12', u'104,ddd,4000,f,13', u'105,eee,5000,m,11', u'106,fff,6000,f,14', u'107,ggg,7000,m,15', u'108,hhh,8000,f,16']
+>>> r2=r1.map(lambda x:x.split(","))
+>>> r2.collect()
+[[u'101', u'aaa', u'1000', u'm', u'11'], [u'102', u'bbb', u'2000', u'f', u'12'], [u'103', u'ccc', u'3000', u'm', u'12'], [u'104', u'ddd', u'4000', u'f', u'13'], [u'105', u'eee', u'5000', u'm', u'11'], [u'106', u'fff', u'6000', u'f', u'14'], [u'107', u'ggg', u'7000', u'm', u'15'], [u'108', u'hhh', u'8000', u'f', u'16']]
+>>> from pyspark.sql import Row
+>>> r3=r2.map(lambda x:Row(eid=int(x[0]),ename=x[1],sal=int(x[2]),sex=x[3],dno=int(x[4])))
+>>> r3.collect()
+[Row(dno=11, eid=101, ename=u'aaa', sal=1000, sex=u'm'), Row(dno=12, eid=102, ename=u'bbb', sal=2000, sex=u'f'), Row(dno=12, eid=103, ename=u'ccc', sal=3000, sex=u'm'), Row(dno=13, eid=104, ename=u'ddd', sal=4000, sex=u'f'), Row(dno=11, eid=105, ename=u'eee', sal=5000, sex=u'm'), Row(dno=14, eid=106, ename=u'fff', sal=6000, sex=u'f'), Row(dno=15, eid=107, ename=u'ggg', sal=7000, sex=u'm'), Row(dno=16, eid=108, ename=u'hhh', sal=8000, sex=u'f')]
+>>> emps1=spark.createDataFrame(r3)
+>>> emps1.show()
++---+---+-----+----+---+
+|dno|eid|ename| sal|sex|
++---+---+-----+----+---+
+| 11|101|  aaa|1000|  m|
+| 12|102|  bbb|2000|  f|
+| 12|103|  ccc|3000|  m|
+| 13|104|  ddd|4000|  f|
+| 11|105|  eee|5000|  m|
+| 14|106|  fff|6000|  f|
+| 15|107|  ggg|7000|  m|
+| 16|108|  hhh|8000|  f|
++---+---+-----+----+---+
+
+>>> #Now loading dept into HDFS
+... 
+>>> rr1=sc.textFile("hdfs://localhost:9000/pyspark630pm/dept1")
+>>> rr1.collect()
+[u'11,mrkt,hyd', u'12,HR,delhi', u'13,fin,pune', u'17,HR,hyd', u'18,fin,pune', u'19,mrkt,delhi']
+>>> rr2=rr1.map(lambda x:x.split(","))
+>>> rr2.collect()
+[[u'11', u'mrkt', u'hyd'], [u'12', u'HR', u'delhi'], [u'13', u'fin', u'pune'], [u'17', u'HR', u'hyd'], [u'18', u'fin', u'pune'], [u'19', u'mrkt', u'delhi']]
+>>> rr3=rr2.map(lambda x:Row(dno=int(x[0]),dname=x[1],city=x[2]))
+>>> rr3.collect()
+[Row(city=u'hyd', dname=u'mrkt', dno=11), Row(city=u'delhi', dname=u'HR', dno=12), Row(city=u'pune', dname=u'fin', dno=13), Row(city=u'hyd', dname=u'HR', dno=17), Row(city=u'pune', dname=u'fin', dno=18), Row(city=u'delhi', dname=u'mrkt', dno=19)]
+>>> dept1=spark.createFataFrame(rr3)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+AttributeError: 'SparkSession' object has no attribute 'createFataFrame'
+>>> dept1=spark.createDataFrame(rr3)
+>>> dept1.show()
++-----+-----+---+
+| city|dname|dno|
++-----+-----+---+
+|  hyd| mrkt| 11|
+|delhi|   HR| 12|
+| pune|  fin| 13|
+|  hyd|   HR| 17|
+| pune|  fin| 18|
+|delhi| mrkt| 19|
++-----+-----+---+
+
+>>> #Now registering the DataFrames as tempTables
+... 
+>>> sqlContext.registerDataFrameAsTable(emps1,"emp1")
+>>> sqlContext.registerDataFrameAsTable(dept1,"dept")
+>>> sqlContext.sql("select * from emp1").show()
++---+---+-----+----+---+
+|dno|eid|ename| sal|sex|
++---+---+-----+----+---+
+| 11|101|  aaa|1000|  m|
+| 12|102|  bbb|2000|  f|
+| 12|103|  ccc|3000|  m|
+| 13|104|  ddd|4000|  f|
+| 11|105|  eee|5000|  m|
+| 14|106|  fff|6000|  f|
+| 15|107|  ggg|7000|  m|
+| 16|108|  hhh|8000|  f|
++---+---+-----+----+---+
+
+>>> sqlContext.sql("select * from dept").show()
++-----+-----+---+
+| city|dname|dno|
++-----+-----+---+
+|  hyd| mrkt| 11|
+|delhi|   HR| 12|
+| pune|  fin| 13|
+|  hyd|   HR| 17|
+| pune|  fin| 18|
+|delhi| mrkt| 19|
++-----+-----+---+
+
+>>> res=sqlContext.sql("select city,sum(sal) as totsal from emp1 e join dept d on e.dno=d.dno group by city").show()
+
++-----+------+ 
+| city|totsal|
++-----+------+
+|delhi|  5000|
+|  hyd|  6000|
+| pune|  4000|
++-----+------+
+
+-----------------------------------------------------------------------------------
+#Task:
+hadoop@ubuntu:~$ hdfs dfs -put sales5.txt /pyspark630pm
+hadoop@ubuntu:~$ hdfs dfs -cat /pyspark630pm/sales5.txt
+1/2/2018,70000
+2/2/2018,20000
+3/2/2017,30000
+4/2/2017,15000
+1/3/2017,9000
+2/3/2017,11000
+3/3/2017,19000
+4/3/2017,25000
+1/5/2019,20000
+2/5/2019,40000
+1/8/2020,50000
+2/8/2020,60000
+1/9/2020,30000
+2/9/2020,80000
+1/10/2020,20000
+2/10/2020,40000
+3/10/2020,50000
+
+Task1: year wise--->totprice,maxprice,minprice,count
+Task2: year wise,monthwise--->totprice,maxprice,minprice,count
+
+
+ #Step 1: Loading
+... 
+>>> r1=sc.textFile("hdfs://localhost:9000/pyspark630pm/sales5.txt")
+>>> r1.collect()
+[u'1/2/2018,70000', u'2/2/2018,20000', u'3/2/2017,30000', u'4/2/2017,15000', u'1/3/2017,9000', u'2/3/2017,11000', u'3/3/2017,19000', u'4/3/2017,25000', u'1/5/2019,20000', u'2/5/2019,40000', u'1/8/2020,50000', u'2/8/2020,60000', u'1/9/2020,30000', u'2/9/2020,80000', u'1/10/2020,20000', u'2/10/2020,40000', u'3/10/2020,50000']
+>>> #Step 2: Splitting based on delimiter(comma)
+... 
+>>> r2=r1.map(lambda x:x.split(","))
+>>> r2.collect()
+[[u'1/2/2018', u'70000'], [u'2/2/2018', u'20000'], [u'3/2/2017', u'30000'], [u'4/2/2017', u'15000'], [u'1/3/2017', u'9000'], [u'2/3/2017', u'11000'], [u'3/3/2017', u'19000'], [u'4/3/2017', u'25000'], [u'1/5/2019', u'20000'], [u'2/5/2019', u'40000'], [u'1/8/2020', u'50000'], [u'2/8/2020', u'60000'], [u'1/9/2020', u'30000'], [u'2/9/2020', u'80000'], [u'1/10/2020', u'20000'], [u'2/10/2020', u'40000'], [u'3/10/2020', u'50000']]
+>>> r3=r2.map(lambda x:(x[0].split("/"),x[1])
+... )
+>>> r3.collect()
+[([u'1', u'2', u'2018'], u'70000'), ([u'2', u'2', u'2018'], u'20000'), ([u'3', u'2', u'2017'], u'30000'), ([u'4', u'2', u'2017'], u'15000'), ([u'1', u'3', u'2017'], u'9000'), ([u'2', u'3', u'2017'], u'11000'), ([u'3', u'3', u'2017'], u'19000'), ([u'4', u'3', u'2017'], u'25000'), ([u'1', u'5', u'2019'], u'20000'), ([u'2', u'5', u'2019'], u'40000'), ([u'1', u'8', u'2020'], u'50000'), ([u'2', u'8', u'2020'], u'60000'), ([u'1', u'9', u'2020'], u'30000'), ([u'2', u'9', u'2020'], u'80000'), ([u'1', u'10', u'2020'], u'20000'), ([u'2', u'10', u'2020'], u'40000'), ([u'3', u'10', u'2020'], u'50000')]
+>>> #Step 4: Extracting the required fields and creating row objects
+... 
+>>> r4=r3.map(lambda x:Row(day=int(x[0][0]),month=int(x[0][1]),year=int(x[0][2]),price=int(x[1])))
+>>> r4.collect()
+[Row(day=1, month=2, price=70000, year=2018), Row(day=2, month=2, price=20000, year=2018), Row(day=3, month=2, price=30000, year=2017), Row(day=4, month=2, price=15000, year=2017), Row(day=1, month=3, price=9000, year=2017), Row(day=2, month=3, price=11000, year=2017), Row(day=3, month=3, price=19000, year=2017), Row(day=4, month=3, price=25000, year=2017), Row(day=1, month=5, price=20000, year=2019), Row(day=2, month=5, price=40000, year=2019), Row(day=1, month=8, price=50000, year=2020), Row(day=2, month=8, price=60000, year=2020), Row(day=1, month=9, price=30000, year=2020), Row(day=2, month=9, price=80000, year=2020), Row(day=1, month=10, price=20000, year=2020), Row(day=2, month=10, price=40000, year=2020), Row(day=3, month=10, price=50000, year=2020)]
+>>> #Step 5:Creating a DF
+... 
+>>> sales_DF=spark.createDataFrame(r4)
+>>> sales_DF.show()
++---+-----+-----+----+
+|day|month|price|year|
++---+-----+-----+----+
+|  1|    2|70000|2018|
+|  2|    2|20000|2018|
+|  3|    2|30000|2017|
+|  4|    2|15000|2017|
+|  1|    3| 9000|2017|
+|  2|    3|11000|2017|
+|  3|    3|19000|2017|
+|  4|    3|25000|2017|
+|  1|    5|20000|2019|
+|  2|    5|40000|2019|
+|  1|    8|50000|2020|
+|  2|    8|60000|2020|
+|  1|    9|30000|2020|
+|  2|    9|80000|2020|
+|  1|   10|20000|2020|
+|  2|   10|40000|2020|
+|  3|   10|50000|2020|
++---+-----+-----+----+
+
+>>> #Step 6: register DF as Table
+... 
+>>> sqlContext.registerDataFrameAsTable(sales,"sales1")\
+... 
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'sales' is not defined
+>>> sqlContext.registerDataFrameAsTable(sales,"sales1")
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'sales' is not defined
+>>> sqlContext.registerDataFrameAsTable(sales_DF,"sales1")
+>>> sqlContext.sql("select * from sales1").show()
++---+-----+-----+----+
+|day|month|price|year|
++---+-----+-----+----+
+|  1|    2|70000|2018|
+|  2|    2|20000|2018|
+|  3|    2|30000|2017|
+|  4|    2|15000|2017|
+|  1|    3| 9000|2017|
+|  2|    3|11000|2017|
+|  3|    3|19000|2017|
+|  4|    3|25000|2017|
+|  1|    5|20000|2019|
+|  2|    5|40000|2019|
+|  1|    8|50000|2020|
+|  2|    8|60000|2020|
+|  1|    9|30000|2020|
+|  2|    9|80000|2020|
+|  1|   10|20000|2020|
+|  2|   10|40000|2020|
+|  3|   10|50000|2020|
++---+-----+-----+----+
+
+>>> #Step 7:
+... 
+>>> res1=sqlContext.sql("select year,sum(price) as totrevenue from sales1 group by year").show()
+[Stage 94:=======================>                               [Stage 94:=============================>                         [Stage 94:====================================>                  [Stage 94:==========================================>            [Stage 94:=================================================>                                                                      [Stage 96:===========================>                           [Stage 96:==================================>                    [Stage 96:=========================================>             [Stage 96:===================================================>                                                                    +----+----------+
+|year|totrevenue|
++----+----------+
+|2018|     90000|
+|2017|    109000|
+|2020|    330000|
+|2019|     60000|
++----+----------+
+
+>>> res1=sqlContext.sql("select year,month,sum(price) as totrevenue from sales1 group by year,month").show()
+[Stage 104:=================>                                    [Stage 104:========================>                             [Stage 104:==============================>                       [Stage 104:====================================>                 [Stage 104:===========================================>          [Stage 104:=================================================>                                                                     [Stage 106:===========================>                          [Stage 106:====================================>                 [Stage 106:===========================================>          [Stage 106:===================================================>                                                                   +----+-----+----------+
+|year|month|totrevenue|
++----+-----+----------+
+|2019|    5|     60000|
+|2017|    2|     45000|
+|2020|    9|    110000|
+|2020|    8|    110000|
+|2020|   10|    110000|
+|2017|    3|     64000|
+|2018|    2|     90000|
++----+-----+----------+
+
+>>> #Filtering operations
+... 
+>>> res2=sqlContext.sql("select * from sales1 where year=2020").show()
++---+-----+-----+----+
+|day|month|price|year|
++---+-----+-----+----+
+|  1|    8|50000|2020|
+|  2|    8|60000|2020|
+|  1|    9|30000|2020|
+|  2|    9|80000|2020|
+|  1|   10|20000|2020|
+|  2|   10|40000|2020|
+|  3|   10|50000|2020|
++---+-----+-----+----+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

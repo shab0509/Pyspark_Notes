@@ -1,0 +1,349 @@
+Steps in Kafa Execution:
+
+step 1: start zookeeper
+step 2: start broker(server)
+step 3: create topics
+step 4: start producer
+step 5: start consumer
+------------------------------------------------------------------------------------------------------
+
+First copy kafka software onto ur Desktop and rename it as kafka1
+
+
+lenovo@lenovo-Lenovo-G450:~$ cd Desktop
+lenovo@lenovo-Lenovo-G450:~/Desktop$ cd kafka1
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka1$ ls
+bin  config  libs  LICENSE  NOTICE  site-docs
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ ls bin/----->we see all executable script files
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ ls config/
+connect-console-sink.properties    connect-file-sink.properties    connect-standalone.properties  producer.properties     zookeeper.properties
+connect-console-source.properties  connect-file-source.properties  consumer.properties            server.properties
+connect-distributed.properties     connect-log4j.properties        log4j.properties               tools-log4j.properties
+
+----------------------------------------------------------------------------------------
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ nano config/zookeeper.properties
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ cat config/zookeeper.properties
+
+check the port no of zookeeper:
+
+clientPort=2181
+
+--------------------------------------------------------------------------------------------------------------------------------------
+step 1: start zookeeper (in one terminal)
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/zookeeper-server-start.sh config/zookeeper.properties
+
+	at org.apache.zookeeper.server.NIOServerCnxnFactory.run(NIOServerCnxnFactory.java:203)
+	we see this
+
+-------------------------------------------------------------------------------------------------------------------------------------
+step 2: start broker(server) in one terminal
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ jps
+2657 SecondaryNameNode
+3841 Jps
+2998 NodeManager
+2870 ResourceManager
+2494 DataNode
+3582 QuorumPeerMain
+2367 NameNode
+
+before starting broker(server), first check server.properties files
+
+In server.properties file, we need to check or configure 4 things
+1)broker1d=0, if only one broker, 
+  brokerid=1, if we have second broker
+  brokerid=2, if we have third broker
+2)broker portno=9092 
+  if multiple brokers then specify 9092,9093,9094.....
+3)log.dirs=/tmp/kafka-logs
+  for 2nd broker,we need to change the log dir
+4)Zookeeper portno=2181 or any other port that was specified in zookeeper.properties
+---------------------------------------------------------------------------------------
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ nano config/server.properties
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ cat config/server.properties
+
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# see kafka.server.KafkaConfig for additional details and defaults
+
+############################# Server Basics #############################
+
+# The id of the broker. This must be set to a unique integer for each broker.
+broker.id=0
+
+# Switch to enable topic deletion or not, default value is false
+#delete.topic.enable=true
+
+############################# Socket Server Settings #############################
+
+# The address the socket server listens on. It will get the value returned from 
+# java.net.InetAddress.getCanonicalHostName() if not configured.
+#   FORMAT:
+#     listeners = listener_name://host_name:port
+#   EXAMPLE:
+#     listeners = PLAINTEXT://your.host.name:9092
+listeners=PLAINTEXT://:9092
+
+# Hostname and port the broker will advertise to producers and consumers. If not set, 
+# it uses the value for "listeners" if configured.  Otherwise, it will use the value
+# returned from java.net.InetAddress.getCanonicalHostName().
+#advertised.listeners=PLAINTEXT://your.host.name:9092
+
+# Maps listener names to security protocols, the default is for them to be the same. See the config documentation for more details
+#listener.security.protocol.map=PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL
+
+# The number of threads handling network requests
+num.network.threads=3
+
+# The number of threads doing disk I/O
+num.io.threads=8
+
+# The send buffer (SO_SNDBUF) used by the socket server
+socket.send.buffer.bytes=102400
+
+# The receive buffer (SO_RCVBUF) used by the socket server
+socket.receive.buffer.bytes=102400
+
+# The maximum size of a request that the socket server will accept (protection against OOM)
+socket.request.max.bytes=104857600
+
+
+############################# Log Basics #############################
+
+# A comma seperated list of directories under which to store log files
+log.dirs=/tmp/kafka-logs
+
+# The default number of log partitions per topic. More partitions allow greater
+# parallelism for consumption, but this will also result in more files across
+# the brokers.
+num.partitions=1
+
+# The number of threads per data directory to be used for log recovery at startup and flushing at shutdown.
+# This value is recommended to be increased for installations with data dirs located in RAID array.
+num.recovery.threads.per.data.dir=1
+
+############################# Log Flush Policy #############################
+
+# Messages are immediately written to the filesystem but by default we only fsync() to sync
+# the OS cache lazily. The following configurations control the flush of data to disk.
+# There are a few important trade-offs here:
+#    1. Durability: Unflushed data may be lost if you are not using replication.
+#    2. Latency: Very large flush intervals may lead to latency spikes when the flush does occur as there will be a lot of data to flush.
+#    3. Throughput: The flush is generally the most expensive operation, and a small flush interval may lead to exceessive seeks.
+# The settings below allow one to configure the flush policy to flush data after a period of time or
+# every N messages (or both). This can be done globally and overridden on a per-topic basis.
+
+# The number of messages to accept before forcing a flush of data to disk
+#log.flush.interval.messages=10000
+
+# The maximum amount of time a message can sit in a log before we force a flush
+#log.flush.interval.ms=1000
+
+############################# Log Retention Policy #############################
+
+# The following configurations control the disposal of log segments. The policy can
+# be set to delete segments after a period of time, or after a given size has accumulated.
+# A segment will be deleted whenever *either* of these criteria are met. Deletion always happens
+# from the end of the log.
+
+# The minimum age of a log file to be eligible for deletion due to age
+log.retention.hours=168
+
+# A size-based retention policy for logs. Segments are pruned from the log as long as the remaining
+# segments don't drop below log.retention.bytes. Functions independently of log.retention.hours.
+#log.retention.bytes=1073741824
+
+# The maximum size of a log segment file. When this size is reached a new log segment will be created.
+log.segment.bytes=1073741824
+
+# The interval at which log segments are checked to see if they can be deleted according
+# to the retention policies
+log.retention.check.interval.ms=300000
+
+############################# Zookeeper #############################
+
+# Zookeeper connection string (see zookeeper docs for details).
+# This is a comma separated host:port pairs, each corresponding to a zk
+# server. e.g. "127.0.0.1:3000,127.0.0.1:3001,127.0.0.1:3002".
+# You can also append an optional chroot string to the urls to specify the
+# root directory for all kafka znodes.
+zookeeper.connect=localhost:2181
+
+# Timeout in ms for connecting to zookeeper
+zookeeper.connection.timeout.ms=6000
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Starting the broker:
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-server-start.sh config/server.properties
+
+ (org.apache.kafka.common.utils.AppInfoParser)
+[2017-09-14 15:16:25,584] INFO Kafka commitId : e89bffd6b2eff799 (org.apache.kafka.common.utils.AppInfoParser)
+[2017-09-14 15:16:25,590] INFO [Kafka Server 0], started (kafka.server.KafkaServer)
+
+
+we get [kafka server 0] started
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+step 3: create topic(in one terminal)
+
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic mytopic1
+Created topic "mytopic1".
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 2 --topic mytopic7
+Created topic "mytopic7".
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-topics.sh --list --zookeeper localhost:2181 
+mytopic
+mytopic7
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+step 4: start producer (in one terminal)
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic mytopic1
+hello
+how are you?
+bye
+helloooooooooooooooooooooooooooooooooooooooooooooooooooo
+haiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+enti sangathulu
+-------------------------------------------------------------------------------------------------------------------------------------------
+
+step 5: start consumer (in one terminal)
+
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic mytopic1 --from-beginning
+Using the ConsoleConsumer with old consumer is deprecated and will be removed in a future major release. Consider using the new consumer by passing [bootstrap-server] instead of [zookeeper].
+hello
+how are you?
+bye 
+helloooooooooooooooooooooooooooooooooooooooooooooooooooo
+haiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+
+step 6: Killing Consumer:stop consumer (ctrl+c) and restart
+
+Here no Probem to producer
+^CProcessed a total of 5 messages
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic mytopic --from-beginning
+Using the ConsoleConsumer with old consumer is deprecated and will be removed in a future major release. Consider using the new consumer by passing [bootstrap-server] instead of [zookeeper].
+hello
+how are you?
+bye
+helloooooooooooooooooooooooooooooooooooooooooooooooooooo
+haiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+--------------------------------------------------------------------------------------------------------------------------------------
+step 7: kill producer : stop producer(ctrl+c) and restart
+
+^Clenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic mytopic
+enti sangathulu?
+msg1
+msg2
+msg3
+
+observe in consumer
+
+hello
+how are you?
+bye
+helloooooooooooooooooooooooooooooooooooooooooooooooooooo
+haiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+enti sangathulu?
+msg1
+msg2
+msg3
+---------------------------------------------------------------------------------------------------------------------------------------
+step 8:kill server:stop server (broker) (ctrl+c)
+
+producer/consumer will be running ---------->but they cannot read/write
+
+^C[2017-09-14 15:57:41,562] INFO [Kafka Server 0], shutting down (kafka.server.KafkaServer)
+[2017-09-14 15:57:41,564] INFO [Kafka Server 0], Starting controlled shutdown (kafka.server.KafkaServer)
+[2017-09-14 15:57:41,670] INFO [Kafka Server 0], Controlled shutdown succeeded (kafka.server.KafkaServer)
+[2017-09-14 15:57:41,675] INFO [Socket Server on Broker 0], Shutting down (kafka.network.SocketServer)
+[2017-09-14 15:57:41,711] INFO [Socket Server on Broker 0], Shutdown completed (kafka.network.SocketServer)
+[2017-09-14 15:57:41,713] INFO [Kafka Request Handler on Broker 0], shutting down (kafka.server.KafkaRequestHandlerPool)
+[2017-09-14 15:57:41,719] INFO [Kafka Request Handler on Broker 0], shut down completely (kafka.server.KafkaRequestHandlerPool)
+[2017-09-14 15:57:41,740] INFO [ThrottledRequestReaper-Fetch], Shutting down (kafka.server.ClientQuotaManager$ThrottledRequestReaper)
+[2017-09-14 15:57:42,483] INFO [ThrottledRequestReaper-Fetch], Stopped  (kafka.server.ClientQuotaManager$ThrottledRequestReaper)
+[2017-09-14 15:57:42,483] INFO [ThrottledRequestReaper-Fetch], Shutdown completed (kafka.server.ClientQuotaManager$ThrottledRequestReaper)
+[2017-09-14 15:57:42,484] INFO [ThrottledRequestReaper-Produce], Shutting down (kafka.server.ClientQuotaManager$ThrottledRequestReaper)
+[2017-09-14 15:57:43,483] INFO [ThrottledRequestReaper-Produce], Stopped  (kafka.server.ClientQuotaManager$ThrottledRequestReaper)
+[2017-09-14 15:57:43,483] INFO [ThrottledRequestReaper-Produce], Shutdown completed (kafka.server.ClientQuotaManager$ThrottledRequestReaper)
+[2017-09-14 15:57:43,484] INFO [KafkaApi-0] Shutdown complete. (kafka.server.KafkaApis)
+[2017-09-14 15:57:43,487] INFO [Replica Manager on Broker 0]: Shutting down (kafka.server.ReplicaManager)
+[2017-09-14 15:57:43,488] INFO [ReplicaFetcherManager on broker 0] shutting down (kafka.server.ReplicaFetcherManager)
+[2017-09-14 15:57:43,493] INFO [ReplicaFetcherManager on broker 0] shutdown completed (kafka.server.ReplicaFetcherManager)
+[2017-09-14 15:57:43,494] INFO [ExpirationReaper-0], Shutting down (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:43,537] INFO [ExpirationReaper-0], Stopped  (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:43,537] INFO [ExpirationReaper-0], Shutdown completed (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:43,538] INFO [ExpirationReaper-0], Shutting down (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:43,690] INFO [ExpirationReaper-0], Stopped  (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:43,690] INFO [ExpirationReaper-0], Shutdown completed (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:43,766] INFO [Replica Manager on Broker 0]: Shut down completely (kafka.server.ReplicaManager)
+[2017-09-14 15:57:43,767] INFO [ExpirationReaper-0], Shutting down (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:43,891] INFO [ExpirationReaper-0], Stopped  (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:43,891] INFO [ExpirationReaper-0], Shutdown completed (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:43,896] INFO [GroupCoordinator 0]: Shutting down. (kafka.coordinator.GroupCoordinator)
+[2017-09-14 15:57:43,897] INFO [ExpirationReaper-0], Shutting down (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:44,091] INFO [ExpirationReaper-0], Stopped  (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:44,091] INFO [ExpirationReaper-0], Shutdown completed (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:44,091] INFO [ExpirationReaper-0], Shutting down (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:44,291] INFO [ExpirationReaper-0], Stopped  (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:44,291] INFO [ExpirationReaper-0], Shutdown completed (kafka.server.DelayedOperationPurgatory$ExpiredOperationReaper)
+[2017-09-14 15:57:44,292] INFO [GroupCoordinator 0]: Shutdown complete. (kafka.coordinator.GroupCoordinator)
+[2017-09-14 15:57:44,294] INFO Shutting down. (kafka.log.LogManager)
+[2017-09-14 15:57:44,416] INFO Shutdown complete. (kafka.log.LogManager)
+[2017-09-14 15:57:44,428] INFO Terminate ZkClient event thread. (org.I0Itec.zkclient.ZkEventThread)
+[2017-09-14 15:57:44,495] INFO Session: 0x15e7fb9002b0000 closed (org.apache.zookeeper.ZooKeeper)
+[2017-09-14 15:57:44,499] INFO EventThread shut down for session: 0x15e7fb9002b0000 (org.apache.zookeeper.ClientCnxn)
+[2017-09-14 15:57:44,501] INFO [Kafka Server 0], shut down completed (kafka.server.KafkaServer)
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ 
+
+observe the producer
+
+msg1
+msg2
+msg3
+
+still running
+
+observe the consumer
+
+still running
+
+[2017-09-14 15:59:09,361] WARN [console-consumer-55534_lenovo-Lenovo-G450-1505383752178-12290207-leader-finder-thread], Failed to find leader for Set(mytopic-0) (kafka.consumer.ConsumerFetcherManager$LeaderFinderThread)
+kafka.common.KafkaException: fetching topic metadata for topics [Set(mytopic)] from broker [ArrayBuffer()] failed
+	at kafka.client.ClientUtils$.fetchTopicMetadata(ClientUtils.scala:74)
+	at kafka.client.ClientUtils$.fetchTopicMetadata(ClientUtils.scala:95)
+	at kafka.consumer.ConsumerFetcherManager$LeaderFinderThread.doWork(ConsumerFetcherManager.scala:68)
+	at kafka.utils.ShutdownableThread.run(ShutdownableThread.scala:63)
+
+
+still running
+
+but cant read from topic, as broker is down , so no fault tolerance in the case of single broker Architecture..
+
+
+
+
+

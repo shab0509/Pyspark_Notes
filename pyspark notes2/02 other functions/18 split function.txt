@@ -1,0 +1,74 @@
+
+split():
+
+pyspark sql provides split() function
+
+syntax:
+pyspark.sql.functions.split(str,pattern)
+
+1st argument--->is DF column of type string
+2nd argument--->is the delimiter that you want to split
+
+>>> data=[("Mahendra,Singh,Dhoni","320","IND",80760),
+...       ("Sachin,Ramesh,Tendulakar","430","IND",15470),
+...       ("Injamam,ul,Haq","310","PAK",8620)]
+>>> columns=["name","matches","country","Runs"]
+>>> df=spark.createDataFrame(data,columns)
+>>> df.show()
++--------------------+-------+-------+-----+
+|                name|matches|country| Runs|
++--------------------+-------+-------+-----+
+|Mahendra,Singh,Dhoni|    320|    IND|80760|
+|Sachin,Ramesh,Ten...|    430|    IND|15470|
+|      Injamam,ul,Haq|    310|    PAK| 8620|
++--------------------+-------+-------+-----+
+
+Now split the column--->name with comma delimiter
+
+splits a string to a array type
+
+>>> from pyspark.sql.functions import split,col
+>>> df2=df.select(split(col("name"),",").alias("PlayerName")).drop("name")
+>>> df2.show()
++--------------------+
+|          PlayerName|
++--------------------+
+|[Mahendra, Singh,...|
+|[Sachin, Ramesh, ...|
+|  [Injamam, ul, Haq]|
++--------------------+
+
+(or ) by converting to temp table also
+>>> df.createOrReplaceTempView("PLAYER")
+
+>>> sqlContext.sql("select SPLIT(name,',') as PLAYERNAME from PLAYER").show()
++--------------------+
+|          PLAYERNAME|
++--------------------+
+|[Mahendra, Singh,...|
+|[Sachin, Ramesh, ...|
+|  [Injamam, ul, Haq]|
++--------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

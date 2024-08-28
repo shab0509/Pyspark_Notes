@@ -1,0 +1,77 @@
+
+
+Reading data(table) from mysql database and creating a dataframe
+
+hadoop@ubuntu:~$ mysql -u hadoop -p
+Enter password: hadoop
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| hive_meta          |
+| mysql              |
+| performance_schema |
+| sqoopdb1           |
+| sqoopdb2           |
+| sqoopdb3           |
+| sys                |
++--------------------+
+8 rows in set (0.00 sec)
+
+mysql> create database sparkdb1
+    -> ;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use sparkdb1;
+Database changed
+mysql> show tables;
+Empty set (0.00 sec)
+
+mysql> create table emp(eid int,ename varchar(10),sal int,sex varchar(1),dno int);
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into emp values(101,'Miller',50000,'m',11),(102,'Blake',60000,'m',12),(103,'sony',70000,'f',11),(104,'sita',80000,'f',12),(105,'James',90000,'m',13);
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> select * from emp;
++------+--------+-------+------+------+
+| eid  | ename  | sal   | sex  | dno  |
++------+--------+-------+------+------+
+|  101 | Miller | 50000 | m    |   11 |
+|  102 | Blake  | 60000 | m    |   12 |
+|  103 | sony   | 70000 | f    |   11 |
+|  104 | sita   | 80000 | f    |   12 |
+|  105 | James  | 90000 | m    |   13 |
++------+--------+-------+------+------+
+5 rows in set (0.00 sec)
+
+Now reading this emp table from mysql and creating a DF
+
+>>> df=spark.read.format("jdbc") \
+...  .option("url","jdbc:mysql://localhost/sparkdb1") \
+...  .option("driver","com.mysql.jdbc.Driver") \
+...  .option("dbtable","emp") \
+... .option("user","hadoop") \
+... .option("password","hadoop").load()
+
+>>>df.show()
++---+------+-----+---+---+
+|eid| ename|  sal|sex|dno|
++---+------+-----+---+---+
+|101|Miller|50000|  m| 11|
+|102| Blake|60000|  m| 12|
+|103|  sony|70000|  f| 11|
+|104|  sita|80000|  f| 12|
+|105| James|90000|  m| 13|
++---+------+-----+---+---+
+
+#Now register as temp table and work with pure sql stmts
+
+
+
+
+
+

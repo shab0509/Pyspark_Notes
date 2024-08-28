@@ -1,0 +1,120 @@
+Frequent Pattern mining Algorithms
+
+FP-Growth
+
+FP-growth, a popular algorithm for mining frequent itemsets.
+“FP” stands for frequent pattern
+Frequent Patterns: Frequent patterns are the patterns(itemsets, subsequences, or substructures) that appear frequently in a data set.
+Frequent itemset patterns: Frequent itemsets are the set of items that appear frequently in the daily transactional data.
+ex:milk,bread,jam
+
+subsequence patterns:Sequence of actions that occur frequently or consecutively.
+ex:Buying a smart phone followed by panel followed by memory card followed by speakers etc.
+
+Substructure patterns:They refer to different structural forms such as sub-graphs,sub-trees etc
+
+
+
+
+ 
+The FP-growth mining input is a set of transactions.
+Each transaction is simply a set of items and the algorithm looks for common subsets of items that appear across transactions. 
+For a subset to be considered a pattern, it must appear in some minimum proportion of all transactions, termed the support.
+
+Here is a brief description of the algorithm.
+The algorithm takes an RDD of transactions from user, and works in two steps to output frequent itemsets.
+In the first step, item frequency is calculated and infrequent items are filtered (because frequent itemsets must consist of frequent items). In the second step, suffix trees (FP-trees) are constructed and then frequent itemsets can be extracted from the suffix trees. 
+
+
+//fpgrowthinput2
+i1 i2 i3 i4 i5 i6
+i2 i4 i6 i1 i3  
+i1 i3 i5 i4
+i2 i6 i1 i5 i4
+i1 i3 i2 i6 i5
+i1 i2
+i1 i3 i4
+i2 i4 i5 i3 i1
+
+
+from pyspark.mllib.fpm import FPGrowth
+
+step 1: Loading data
+data=sc.textFile("hdfs://localhost:9000/sparklab/fpgrowthinput2")
+
+step 2:Splitting and trimming
+transactions = data.map(lambda line: line.strip().split(' '))
+
+step 3: Build the model
+model = FPGrowth.train(transactions, minSupport=0.2, numPartitions=10)
+
+step 4: Applying the model and find item frequencies
+result = model.freqItemsets().collect()
+for p in result:
+    print(p)
+
+
+
+output:
+FreqItemset(items=[u'i1'], freq=8)
+FreqItemset(items=[u'i2'], freq=6)
+FreqItemset(items=[u'i2', u'i1'], freq=6)
+FreqItemset(items=[u'i3'], freq=6)
+FreqItemset(items=[u'i3', u'i2'], freq=4)
+FreqItemset(items=[u'i3', u'i2', u'i1'], freq=4)
+FreqItemset(items=[u'i3', u'i1'], freq=6)
+FreqItemset(items=[u'i4'], freq=6)
+FreqItemset(items=[u'i4', u'i3'], freq=5)
+FreqItemset(items=[u'i4', u'i3', u'i2'], freq=3)
+FreqItemset(items=[u'i4', u'i3', u'i2', u'i1'], freq=3)
+FreqItemset(items=[u'i4', u'i3', u'i1'], freq=5)
+FreqItemset(items=[u'i4', u'i2'], freq=4)
+FreqItemset(items=[u'i4', u'i2', u'i1'], freq=4)
+FreqItemset(items=[u'i4', u'i1'], freq=6)
+FreqItemset(items=[u'i5'], freq=5)
+FreqItemset(items=[u'i5', u'i3'], freq=4)
+FreqItemset(items=[u'i5', u'i3', u'i2'], freq=3)
+FreqItemset(items=[u'i5', u'i3', u'i2', u'i1'], freq=3)
+FreqItemset(items=[u'i5', u'i3', u'i1'], freq=4)
+FreqItemset(items=[u'i5', u'i2'], freq=4)
+FreqItemset(items=[u'i5', u'i2', u'i1'], freq=4)
+FreqItemset(items=[u'i5', u'i4'], freq=4)
+FreqItemset(items=[u'i5', u'i4', u'i3'], freq=3)
+FreqItemset(items=[u'i5', u'i4', u'i3', u'i2'], freq=2)
+FreqItemset(items=[u'i5', u'i4', u'i3', u'i2', u'i1'], freq=2)
+FreqItemset(items=[u'i5', u'i4', u'i3', u'i1'], freq=3)
+FreqItemset(items=[u'i5', u'i4', u'i2'], freq=3)
+FreqItemset(items=[u'i5', u'i4', u'i2', u'i1'], freq=3)
+FreqItemset(items=[u'i5', u'i4', u'i1'], freq=4)
+FreqItemset(items=[u'i5', u'i1'], freq=5)
+FreqItemset(items=[u'i6'], freq=4)
+FreqItemset(items=[u'i6', u'i3'], freq=3)
+FreqItemset(items=[u'i6', u'i3', u'i2'], freq=3)
+FreqItemset(items=[u'i6', u'i3', u'i2', u'i1'], freq=3)
+FreqItemset(items=[u'i6', u'i3', u'i1'], freq=3)
+FreqItemset(items=[u'i6', u'i5'], freq=3)
+FreqItemset(items=[u'i6', u'i5', u'i3'], freq=2)
+FreqItemset(items=[u'i6', u'i5', u'i3', u'i2'], freq=2)
+FreqItemset(items=[u'i6', u'i5', u'i3', u'i2', u'i1'], freq=2)
+FreqItemset(items=[u'i6', u'i5', u'i3', u'i1'], freq=2)
+FreqItemset(items=[u'i6', u'i5', u'i2'], freq=3)
+FreqItemset(items=[u'i6', u'i5', u'i2', u'i1'], freq=3)
+FreqItemset(items=[u'i6', u'i5', u'i4'], freq=2)
+FreqItemset(items=[u'i6', u'i5', u'i4', u'i2'], freq=2)
+FreqItemset(items=[u'i6', u'i5', u'i4', u'i2', u'i1'], freq=2)
+FreqItemset(items=[u'i6', u'i5', u'i4', u'i1'], freq=2)
+FreqItemset(items=[u'i6', u'i5', u'i1'], freq=3)
+FreqItemset(items=[u'i6', u'i2'], freq=4)
+FreqItemset(items=[u'i6', u'i2', u'i1'], freq=4)
+FreqItemset(items=[u'i6', u'i4'], freq=3)
+FreqItemset(items=[u'i6', u'i4', u'i3'], freq=2)
+FreqItemset(items=[u'i6', u'i4', u'i3', u'i2'], freq=2)
+FreqItemset(items=[u'i6', u'i4', u'i3', u'i2', u'i1'], freq=2)
+FreqItemset(items=[u'i6', u'i4', u'i3', u'i1'], freq=2)
+FreqItemset(items=[u'i6', u'i4', u'i2'], freq=3)
+FreqItemset(items=[u'i6', u'i4', u'i2', u'i1'], freq=3)
+FreqItemset(items=[u'i6', u'i4', u'i1'], freq=3)
+FreqItemset(items=[u'i6', u'i1'], freq=4)
+
+
+

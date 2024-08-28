@@ -1,0 +1,181 @@
+
+
+Multigrouping and single Aggregation
+
+ex: select dno,sex,sum(sal) from emp group by dno,sex
+
+11  
+   m----->totsal
+   f----->totsal
+12
+   m----->totsal
+   f----->totsal
+13
+   m----->totsal
+   f----->totsal
+
+>>> r1=sc.textFile("hdfs://localhost:9000/pyspark630pm/emp1.txt")
+>>> def makepair(x):
+...    words=x.split(",")
+...    dno=int(words[4])
+...    sex=words[3]
+...    sal=int(words[2])
+...    pair=((dno,sex),sal)
+...    return pair
+... 
+>>> dnosexsalpair=r1.map(lambda x:makepair(x))
+>>> dnosexsalpair.collect()
+[((11, u'm'), 10000), ((12, u'm'), 20000), ((11, u'f'), 30000), ((12, u'f'), 40000), ((13, u'm'), 50000)]
+>>> res=dnosexsalpair.reduceByKey(lambda x,y:x+y)
+>>> res.collect()
+[((11, u'f'), 30000), ((12, u'f'), 40000), ((12, u'm'), 20000), ((11, u'm'), 10000), ((13, u'm'), 50000)]
+
+===============================================================================================
+3)Single Grouping and Multiple Aggregations
+
+Task: select dno,sum(sal),avg(sal),max(sal),min(sal),count(*) from emp group by dno
+
+o/p:          11  totsal  avgsal   maxsal   minsal  count
+              12    "        "       "        "       "
+              13    "        "       "        "       "
+
+#step 1:Loading a file
+
+>>> r1=sc.textFile("hdfs://localhost:9000/pyspark630pm/emp1.txt")
+>>> r1.collect()
+[u'101,Miller,10000,m,11', u'102,Blake,20000,m,12', u'103,Sony,30000,f,11', u'104,Sita,40000,f,12', u'105,James,50000,m,13']
+>>> #step 2: splitting based on delimiter
+... 
+>>> r2=r1.map(lambda x:x.split(","))
+>>> r2.collect()
+[[u'101', u'Miller', u'10000', u'm', u'11'], [u'102', u'Blake', u'20000', u'm', u'12'], [u'103', u'Sony', u'30000', u'f', u'11'], [u'104', u'Sita', u'40000', u'f', u'12'], [u'105', u'James', u'50000', u'm', u'13']]
+>>> #step 3:Extract the required fields in (k,v)
+... 
+>>> dnosalpair=r2.map(lambda x:(int(x[4]),int(x[2])))
+>>> dnosalpair.collect()
+[(11, 10000), (12, 20000), (11, 30000), (12, 40000), (13, 50000)]
+>>> #step 4: for multiple aggregations,we use groupBKey() and
+... 
+>>> #we get a iterable object,convert it into list and perform
+... 
+>>> #aggregations
+... 
+>>> grp=dnosalpair.groupByKey()
+>>> grp.collect()
+[(11, <pyspark.resultiterable.ResultIterable object at 0x7f1eaf1dde50>), (12, <pyspark.resultiterable.ResultIterable object at 0x7f1eaf1dded0>), (13, <pyspark.resultiterable.ResultIterable object at 0x7f1eaf1ddf10>)]
+>>> #convert this iterable object to list
+... 
+>>> grp.map(lambda x:(x[0],list(x[1])))
+PythonRDD[28] at RDD at PythonRDD.scala:48
+>>> grp1=grp.map(lambda x:(x[0],list(x[1])))
+>>> grp1.collect()
+[(11, [10000, 30000]), (12, [20000, 40000]), (13, [50000])]
+>>> #combining the above 2 steps
+... 
+>>> grp1=dnosalpair.groupByKey().map(lambda x:(x[0],list(x[1])))
+>>> grp1.collect()
+[(11, [10000, 30000]), (12, [20000, 40000]), (13, [50000])]
+>>> #step 5:performing multiple aggregations by defining a function
+... 
+>>> def extract(x):
+...   dno=x[0]
+...   y=x[1]
+...   sum1=sum(y)
+...   max1=max(y)
+...   min1=min(y)
+...   cnt=len(y)
+...   avg=sum1/cnt
+...   res=(dno,sum1,max1,min1,cnt,avg)
+...   return res
+... 
+>>> aggr=grp1.map(lambda x:extract(x))
+>>> aggr.collect()
+[(11, 40000, 30000, 10000, 2, 20000), (12, 60000, 40000, 20000, 2, 30000), (13, 50000, 50000, 50000, 1, 50000)]
+>>> 
+
+4)Multi Grouping and multiple aggregation
+
+Task:select dno,sex,sum(sal),avg(sal),maX(sal),min(sal),count(*) from emp group by dno,sex
+o/p:  11  m totsal  avgsal  maxsal minsal  count
+      11  f totsal  avgsal  maxsal minsal  count
+      12  m totsal  avgsal  maxsal minsal  count
+      12  f totsal  avgsal  maxsal minsal  count
+
+#step 1: loading the file
+... 
+>>> emps=sc.textFile("hdfs://localhost:9000/pyspark330pm/emp1.txt")
+>>> emps.collect()
+[Stage 0:>                                                          (0 + 1) /                                                                               [u'101,Miller,40000,m,11,hyd', u'102,Blake,50000,m,12,pune', u'103,Sony,60000,f,11,pune', u'104,Sita,70000,f,12,hyd', u'105,John,80000,m,13,hyd']
+>>> #step 2: splitting based on delimiter
+... 
+>>> emplists=emps.map(lambda x:x.split(","))
+>>> emplists.collect()
+[[u'101', u'Miller', u'40000', u'm', u'11', u'hyd'], [u'102', u'Blake', u'50000', u'm', u'12', u'pune'], [u'103', u'Sony', u'60000', u'f', u'11', u'pune'], [u'104', u'Sita', u'70000', u'f', u'12', u'hyd'], [u'105', u'John', u'80000', u'm', u'13', u'hyd']]
+>>> #step 3: Extracting the required fields-->(dno,sex) as key and sal as val
+... 
+>>> dnosexsalpair=emplists.map(lambda x:((int(x[4]),x[3]),int(x[2])))
+>>> dnosexsalpair.collect()
+[((11, u'm'), 40000), ((12, u'm'), 50000), ((11, u'f'), 60000), ((12, u'f'), 70000), ((13, u'm'), 80000)]
+>>> #step 4: groupByKey
+... 
+>>> grp=dnosexsalpair.groupByKey()
+>>> grp.collect()
+[Stage 3:>                                                          (0 + 1) /                                                                               [((11, u'f'), <pyspark.resultiterable.ResultIterable object at 0x7f55bc853550>), ((12, u'f'), <pyspark.resultiterable.ResultIterable object at 0x7f55bc853310>), ((12, u'm'), <pyspark.resultiterable.ResultIterable object at 0x7f55bc853590>), ((11, u'm'), <pyspark.resultiterable.ResultIterable object at 0x7f55bc853610>), ((13, u'm'), <pyspark.resultiterable.ResultIterable object at 0x7f55bc853490>)]
+>>> #converting iterable object to list
+... 
+>>> grp1 =grp.map(lambda x:(x[0],list(x[1])))
+>>> grp1.collect()
+[((11, u'f'), [60000]), ((12, u'f'), [70000]), ((12, u'm'), [50000]), ((11, u'm'), [40000]), ((13, u'm'), [80000])]
+>>> #step 5: performing multiple Aggregations by defining a function
+... 
+>>> x=10
+>>> type(x)
+<type 'int'>
+>>> def extract(x):
+...   dno=x[0][0]
+...   sex=x[0][1]
+...   y=x[1]
+...   sum1=sum(y)
+...   max1=max(y)
+...   min1=min(y)
+...   cnt=len(y)
+...   avg=sum1/cnt
+...   res=(dno,sex,sum1,max1,min1,cnt,avg)
+...   return res
+... 
+>>> aggr=grp1.map(lambda x:extract(x))
+>>> aggr.collect()
+[(11, u'f', 60000, 60000, 60000, 1, 60000), (12, u'f', 70000, 70000, 70000, 1, 70000), (12, u'm', 50000, 50000, 50000, 1, 50000), (11, u'm', 40000, 40000, 40000, 1, 40000), (13, u'm', 80000, 80000, 80000, 1, 80000)]
+>>> 
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

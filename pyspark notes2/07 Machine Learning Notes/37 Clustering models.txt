@@ -1,0 +1,106 @@
+Clustering Models:
+
+Clustering: Clustering is the process of grouping objects based on their similarities.
+
+here we can create 'n' groups  called 'n' clusters.
+
+Clustering models comes under unsupervised learning.
+
+un-supervised learning : without label, we train the model
+                         means by using only i/p features,we train the model
+
+ex:
+
+k-means
+k-median
+
+These are used to identify hidden behavioral patterns within the data
+
+-here everything is i/p variable--->there is no target variable.
+
+ex: Take data of 2 variables of a person
+
+Age  income
+26    30k
+45    75k
+23    85k
+.
+.
+.
+.
+In this way,if 1000recs are given,just by seeing this we cannot identify how many behaviors are 
+there
+
+Data clustering Algorithms will help in identifying the hidden behaviours
+
+i.e the no of clusters i.e the similar behaviors
+
+
+in the fig.
+
+1st person---->age 25 ------>income-->30
+on this what is ur assumption ----->less age 
+                                    less income
+
+next person ----->age high----->income also high
+"    "      ----->age less --->income high
+"    "      ----->age high --->less income
+
+
+here 4 different behaviors are there
+
+1)Less age less income
+2)less age high income
+3)high age high income
+4)High age less income
+
+Assume given data has 1000 records--->by seeing the data,we wont understand the behavior
+
+here we are not performing, on their age predict income?
+
+ex: 1000 people are loan customers
+
+The Bank is asking to identify the behaviour within the given customers;
+
+
+-in these 1000records--->we see some outliers
+
+I make into 4 clusters
+cluster1---->350---->340 people paid the loans
+                      10 people not paid the loans
+
+cluster2---->150---->20people notpaid the loans
+cluster3---->200---->70 not paid the loans
+cluster4---->300----->150 not paid the loans
+
+Bow Banker comes and applies labels
+
+cluster1----->non-risk
+cluster2----->non-risk
+cluster3----->risk
+cluster4----->high risk
+
+Ravi 25age 32k as income----cluster3------>high risk
+Sony 23age 70k ------------- cluster1------>high age high income
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

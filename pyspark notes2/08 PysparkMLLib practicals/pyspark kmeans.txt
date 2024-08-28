@@ -1,0 +1,145 @@
+K-means Algorithm : (Centroid - Based Technique)
+
+k- indicates no of clusters
+
+K-means is most popular and commonly used method
+
+k-means follows unsupervised learning
+
+in K-means, a dataset of 'n' objects is divided into 'k' clusters by the Algorithm
+
+
+
+
+
+
+
+
+
+K-means Algorithm:
+
+step 1 : initially select 'k' objects randomly from Dataset D, as initial cluster centers
+
+step 2 : Depending upon the distance b/w the object and the cluster mean,each remaining object is assigned to the cluster to which it is closer or nearer
+
+step 3 : calculate the new mean(centroid) value of the object for each cluster
+
+step 4 : Repeat steps 2 to 3 ,untill the error becomes zero
+
+
+
+
+The objective of K-Means is to minimize the Cost Function.
+
+What is Cost Function?
+Cost function is the total sum of the squared distance of every point to its corresponding cluster centroid.
+
+
+
+
+
+ex:1
+cat > kmeansdata  
+0.0 0.0 0.0
+0.1 0.1 0.1
+0.2 0.2 0.2
+9.0 9.0 9.0
+9.1 9.1 9.1
+9.2 9.2 9.2
+
+from pyspark.mllib.clustering import KMeans, KMeansModel
+from pyspark.mllib.linalg import Vector
+from numpy import array
+
+Step 1: Load and parse the data
+>>>data=sc.textFile("hdfs://localhost:9000/sparklab/kmeansdata")
+
+
+step 2: Splitting
+>>>split1=data.map(lambda x:x.split(' '))
+>>> split1.collect()
+[[u'0.0', u'0.0', u'0.0'], [u'0.1', u'0.1', u'0.1'], [u'0.2', u'0.2', u'0.2'], [u'9.0', u'9.0', u'9.0'], [u'9.1', u'9.1', u'9.1'], [u'9.2', u'9.2', u'9.2']]
+
+
+step 3: Data Preprocessing
+        convert each element into dense vector
+>>> parseddata=split1.map(lambda x:array([float(x[0]),float(x[1]),float(x[2])]))
+>>> parseddata.collect()
+[array([ 0.,  0.,  0.]), array([ 0.1,  0.1,  0.1]), array([ 0.2,  0.2,  0.2]), array([ 9.,  9.,  9.]), array([ 9.1,  9.1,  9.1]), array([ 9.2,  9.2,  9.2])]
+
+
+step 4: Build the model
+
+    // divide the data into two clusters using KMeans
+    numClusters = 2
+    numIterations = 20
+>>>clusters = KMeans.train(parseddata, numClusters, numIterations)
+
+step 5:
+    //To know the final clustercenters
+>>>clusters.clusterCenters
+[array([ 9.1,  9.1,  9.1]), array([ 0.1,  0.1,  0.1])]
+
+//Cluster centers shows the two Cluster Centroids derived from the data.
+
+
+step 6: Evaluate clustering by computing Within Sum of Squared Errors
+    //Within Set Sum of Squared Errors shows the Cost Function for the given training data.
+
+>>>errorsum = clusters.computeCost(parseddata)
+>>>print("Sum of Squared Errors = ",errorsum)
+('Sum of Squared Errors = ', 0.11999999999994547)
+
+
+
+
+ex:2
+
+hadoop fs -cat /sparklab/kmeansdata2
+25 30
+30 32
+45 70
+34 45
+35 56
+42 76
+32 80
+18 45
+34 20
+42 30
+28 25
+45 35
+65 45
+36 46
+55 45
+
+step 1: Loading
+>>> data=sc.textFile("hdfs://localhost:9000/sparklab/kmeansdata2")
+>>> data.collect()
+[u'25 30', u'30 32', u'45 70', u'34 45', u'35 56', u'42 76', u'32 80', u'18 45', u'34 20', u'42 30', u'28 25', u'45 35', u'65 45', u'36 46', u'55 45']
+
+step 2: splitting
+>>> split1=data.map(lambda x:x.split(' '))
+>>> split1.collect()
+[[u'25', u'30'], [u'30', u'32'], [u'45', u'70'], [u'34', u'45'], [u'35', u'56'], [u'42', u'76'], [u'32', u'80'], [u'18', u'45'], [u'34', u'20'], [u'42', u'30'], [u'28', u'25'], [u'45', u'35'], [u'65', u'45'], [u'36', u'46'], [u'55', u'45']]
+
+step 3: data pre-processing
+>>> parseddata=split1.map(lambda x:array([float(x[0]),float(x[1])]))
+>>> parseddata.collect()
+[array([ 25.,  30.]), array([ 30.,  32.]), array([ 45.,  70.]), array([ 34.,  45.]), array([ 35.,  56.]), array([ 42.,  76.]), array([ 32.,  80.]), array([ 18.,  45.]), array([ 34.,  20.]), array([ 42.,  30.]), array([ 28.,  25.]), array([ 45.,  35.]), array([ 65.,  45.]), array([ 36.,  46.]), array([ 55.,  45.])]
+
+step 4: Building the model
+>>> numClusters = 2
+>>> numIterations = 20
+>>> clusters = KMeans.train(parseddata, numClusters, numIterations)
+
+step 5: Evaluating the model and finding the final cluster center
+
+>>> clusters.clusterCenters
+[array([ 37.45454545,  36.18181818]), array([ 38.5,  70.5])]
+
+step 6: finding error sum
+>>> errorsum = clusters.computeCost(parseddata)
+>>> print("Sum of Squared Errors = ",errorsum)
+('Sum of Squared Errors = ', 3178.363636363633)
+
+

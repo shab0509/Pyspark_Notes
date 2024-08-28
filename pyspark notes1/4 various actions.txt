@@ -1,0 +1,174 @@
+
+Actions:whenever action is performed, the flow executes from its root RDD
+
+The following are some of the actions
+
+1.collect()
+
+2.count()
+
+3.countByKey()
+
+4.countByValue()
+
+5.take(num)
+
+6.top(num)
+
+7.first()
+
+8.reduce()
+
+9.sum()
+
+10.max()
+
+11.min()
+
+12.count()
+
+13.saveAsTextFile(path)
+
+----------------------------------------------------------------------------------------------
+1.collect() :It will collec all partitions of different slave machines into client machile
+>>> x=[10,20,30,40,50]
+>>> r1=sc.parallelize(x)
+>>> r1.collect()
+[10, 20, 30, 40, 50]
+---------------------------------------------------------------------------------------------
+2.count(): counts the no of elements in a RDD
+
+>>> r1.count()
+5
+--------------------------------------------------------------------------------------------
+3.countByValue():counts number of times each value occurs in a RDD--->reurns a dictionary
+>>> medals=["IND","AUS","ENG","IND","AUS","IND","ENG","IND"]
+>>> r1=sc.parallelize(medals)
+>>> r1.countByValue()
+defaultdict(<type 'int'>, {'IND': 4, 'AUS': 2, 'ENG': 2})
+
+>>> r1=sc.parallelize([("hyd","m"),("pune","m"),("hyd","m"),("pune","m")])
+>>> r1.countByValue()
+defaultdict(<type 'int'>, {('hyd', 'm'): 2, ('pune', 'm'): 2})
+
+
+-----------------------------------------------------------------------------------------------
+4.countByKey():counts the no of times each key has occured
+               This is applied only on a paired RDD
+               It also returns a dictionary
+
+>>> r1=sc.parallelize([("hyd","m"),("pune","m"),("hyd","m"),("hyd","f"),("pune","f"),("pune","m")])
+>>> r1.countByKey()
+defaultdict(<type 'int'>, {'pune': 3, 'hyd': 3})
+
+---------------------------------------------------------------------------------------------
+5.take(n) :Takes firs 'n' number of elements of a RDD
+
+>>> emps=sc.parallelize(["Ajay","Rohit","JAmes","Miller","John"])
+>>> emps.take(2)
+['Ajay', 'Rohit']
+
+--------------------------------------------------------------------------------------------
+6.top(n): Takes top 'n' elements from a RDD
+
+>>> sals=sc.parallelize([10000,20000,30000,40000,50000])
+>>> sals.take(2)
+[10000, 20000]
+
+>>> sals.top(2)
+[50000, 40000]
+
+>>> emps=sc.parallelize(["Ajay","Rohit","JAmes","Miller","John"])
+>>> emps.take(2)
+['Ajay', 'Rohit']
+>>> emps.top(2)
+['Rohit', 'Miller']
+
+----------------------------------------------------------------------------------------------
+7.first(): Takes 1st element of a RDD
+>>> emps.first()
+'Ajay'
+---------------------------------------------------------------------------------------------
+8.reduce():combines or sums the elements of a RDD.
+
+>>> x=[10,20,30,40,50]
+>>> r1=sc.parallelize(x)
+>>> r1.reduce(lambda x,y:x+y)
+
+o/p: 150    
+----------------------------------------------------------------------------------------------
+            reduceByKey                          reduce
+1.groups and aggregates                         1.cummulative aggregation
+
+2.It is a transformation                        2.It is an action
+
+3.Applied only on (k,v) pair                    3.cant be applied 
+
+-----------------------------------------------------------------------------------------------
+9.sum(),max(),min(),count()
+
+>>> r1.sum()
+150
+>>> r1.max()
+50
+>>> r1.min()
+10
+>>> r1.count()
+5
+>>> r1.sum()/r1.count()
+30
+------------------------------------------------------------------------------------------------
+
+sals.reduce()                                               sals.sum()
+------------                                                ---------
+sals------>partion1,partition2                   sals------>partition1,partition2
+
+<1000,2000>    <3000,4000>                      <1000,2000>      <3000,4000>
+sum--> 3000    sum--->7000                      <----p1---->     <----p2---->
+<---p1----->    <--p2------>
+<---s1----->    <---s2----->
+individual results of each partition             here all partitions are collected and computed
+will be collected and aggregated  in             at client level 
+another machine(s3) of spark cluster             
+<3000,7000>                                     <1000,2000,3000,4000)  
+<----s3----->                                    <-----client-------->
+sum--->10000                                     sum----->10000
+
+final result(10000) is collected into           final result(10000) is stored in client machine
+client machine
+
+here parallelism while performing sum            Here no parallelism while performing sum
+hence it is faster                               slower as compared to reuce()
+
+-----------------------------------------------------------------------------------------------
+10.saveAsTextFile(path): saving the o/p of a RDD as a text file
+
+hdfs dfs -mkdir /pyspark630pm
+
+>>> r1.saveAsTextFile("hdfs://localhost:9000/pyspark630pm/res1")
+
+
+hadoop@ubuntu:~$ hdfs dfs -ls /pyspark630pm
+Found 1 items
+drwxr-xr-x   - hadoop supergroup          0 2024-01-06 05:22 /pyspark630pm/res1
+hadoop@ubuntu:~$ hdfs dfs -ls /pyspark630pm/res1
+Found 2 items
+-rw-r--r--   1 hadoop supergroup          0 2024-01-06 05:22 /pyspark630pm/res1/_SUCCESS
+-rw-r--r--   1 hadoop supergroup         15 2024-01-06 05:22 /pyspark630pm/res1/part-00000
+hadoop@ubuntu:~$ hdfs dfs -cat /pyspark630pm/res1/part-00000
+10
+20
+30
+40
+50
+
+
+
+
+
+
+
+
+
+
+

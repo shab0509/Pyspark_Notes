@@ -1,0 +1,125 @@
+ Broadcast variables
+
+ Broadcast variables are the read-only shared variables that are available on all the nodes
+ within the cluster in-order to access or use by the tasks instead of sending this data along
+ with every task
+
+ Pyspark distributes broadcast variables to the slaves using broadcast algorithms
+
+ Working of Pyspark broad cast:
+ -----------------------------
+
+ Broadcast variables used in the same way for RDD and DataFrames
+
+pyspark performs the following, when we run RDD or DF applications that have broadcast variabl
+
+1) Pyspark breaks the job into stages that will have distributed shuffling and actions are 
+                    executed within the stage
+
+2)LAter Stages are broken into tasks
+
+3)spark broadcasts the common data needed by the tasks within each stage
+
+4)The broadcasted data is in serialized format and we need to deserialize before 
+  executing each task
+
+Note: Broadcast variables are not sent to executors with sc.broadcast(variable)
+
+  instead we call them and sent to executors when they are first used.
+----------------------------------------------------------------------------------------------
+
+Creating Broadcast variables----->using broadcast(v) method of spark contextclass
+
+
+v--->is the argument that we want to broadcast
+
+ex:
+b1=sc.broadcast(List(0,1,2,3,4))
+b1.value
+
+----------------------------------------------------------------------------------------
+>>> cities={"Hyd":"Hyderabad","BAN":"Benguluru","DEL":"DELHI"}
+>>> broadcastcities=sparkContext.broadcast(cities)
+
+>>> data=[("Ajay","Kumar","INDIA","Hyd"),
+...       ("Rohith","Sharma","INDIA","BAN"),
+...       ("Virat","Kohli","INDIA","DEL")]
+>>> rdd1=spark.SparkContext.parallelize(data)
+
+>>> def city_convert(x):
+...    return broadcastcities.value[x]
+... 
+>>> res=rdd1.map(lambda x:(x[0],x[1],x[2],city_convert(x[3]))).collect()
+>>>print(res)
+[('Ajay', 'Kumar', 'INDIA', 'Hyderabad'), ('Rohith', 'Sharma', 'INDIA', 'Benguluru'), ('Virat', 'Kohli', 'INDIA', 'DELHI')]
+
+
+In this example it uses commonly used data(cities)  in a map variable and distributes  the
+ variable using sparkcontext.broadcast()
+------------------------------------------------------------------------------------------
+ex:2 Next using broadcast variables on Dataframe
+
+In this example it uses commonly used data(cities)  in a map variable and distributes  the
+ variable using sparkcontext.broadcast() and then use these variables on DF map() Transformation
+
+ex:
+
+>>> cities={"Hyd":"Hyderabad","BAN":"Benguluru","DEL":"DELHI"}
+>>> broadcastcities=spark.sparkContext.broadcast(cities)
+>>> data=[("Ajay","Kumar","INDIA","Hyd"),
+...       ("Rohith","Sharma","INDIA","BAN"),
+...       ("Virat","Kohli","INDIA","DEL")]
+>>> columns=["FirstName","LastName","Country","City"]
+>>> df=spark.createDataFrame(data=data,schema=columns)
+2022-08-06 06:57:26 WARN  ObjectStore:568 - Failed to get database global_temp, returning NoSuchObjectException
+>>> df.show()
++---------+--------+-------+----+
+|FirstName|LastName|Country|City|
++---------+--------+-------+----+
+|     Ajay|   Kumar|  INDIA| Hyd|
+|   Rohith|  Sharma|  INDIA| BAN|
+|    Virat|   Kohli|  INDIA| DEL|
++---------+--------+-------+----+
+
+>>> def city_convert(x):
+...     return broadcastcities.value[x]
+... 
+
+>>> res=df.rdd.map(lambda x:(x[0],x[1],x[2],city_convert(x[3]))).toDF()
+>>> res.show()
++------+------+-----+---------+
+|    _1|    _2|   _3|       _4|
++------+------+-----+---------+
+|  Ajay| Kumar|INDIA|Hyderabad|
+|Rohith|Sharma|INDIA|Benguluru|
+| Virat| Kohli|INDIA|    DELHI|
++------+------+-----+---------+
+
+we can also use broad cast variables  in filters 
+
+ex:
+filterdf=df.where(df['city'].isin(broadcastStates.value))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+

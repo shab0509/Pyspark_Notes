@@ -1,0 +1,46 @@
+
+Create a Dataframe with a column contains Json String
+
+>>> jsonstring="""{"FlatNo":620,"street":"Kukatpally","city":"Hyderabad","state":"Telangana"}"""
+>>> df=spark.createDataFrame([(1,jsonstring),],["id","value"])
+
+o/p:
++---+--------------------+
+| id|               value|
++---+--------------------+
+|  1|{"FlatNo":620,"st...|
++---+--------------------+
+
+-----------------------------------------------------------------------------------------------
+json_tuple(): for extracting the elements of JSON
+
+>>> from pyspark.sql.functions import json_tuple,col
+
+>>> df.select(col("id"),json_tuple(col("value"),"FlatNo","street","city","state"))
+    .toDF("id","FlatNo","street","city","state").show()
++---+------+----------+---------+---------+
+| id|FlatNo|    street|     city|    state|
++---+------+----------+---------+---------+
+|  1|   620|Kukatpally|Hyderabad|Telangana|
++---+------+----------+---------+---------+
+
+#or
+get_json_object()
+
+>>> from pyspark.sql.functions import get_json_object,col
+>>> df.select(col("id"),get_json_object(col("value"),"$.city").alias("city")).show()
++---+---------+
+| id|     city|
++---+---------+
+|  1|Hyderabad|
++---+---------+
+
+
+----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+

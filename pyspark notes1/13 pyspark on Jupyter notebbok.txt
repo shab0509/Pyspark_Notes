@@ -1,0 +1,44 @@
+
+working with pyspark within Anaconda Distribution
+
+step 1: Install anaconda
+
+step 2: Install Java ---->Goto Anaconda prompt--->conda install openjdk
+
+step 3: Install pyspark -->conda install pyspark
+
+step 4: Install Findspark-->
+        In order to run Pyspark  in jupyter notebook,first you need to find the pyspark install
+        we do this by using findspark package--->it is a 3rd party package we need to install it
+         before using it
+         conda install -c conda-forge findspark
+step 5: Validate Pyspark Instalaltion :
+        >pyspark ---->pyspark opens
+
+        >jupyter notebook ---->jupyter notebook opens in browser
+ 
+         
+
+step 6: write the following code and check
+import findspark
+findspark.init()
+findspark.find()
+
+from  pyspark.sql import SparkSession
+#creating spark driver
+spark=SparkSession.builder.master("local").appName("DemoApp1").getOrCreate()
+#spark
+ It displays the details
+emps=[("Ajay",20000),("Blake",30000),("Rahul",40000)]
+columns=["EmpName","Salary"]
+df=spark.createDataFrame(emps,columns)
+df.show()
+
+o/p:
++-------+------+
+|EmpName|Salary|
++-------+------+
+|   Ajay| 20000|
+|  Blake| 30000|
+|  Rahul| 40000|
++-------+------+

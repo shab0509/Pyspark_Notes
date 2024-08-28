@@ -1,0 +1,114 @@
+
+Machine Learning follows 2 types of Approaches:
+
+1)Supervised Learning : here prediction based on i/p variable and response variable
+2)unsupervised Learning : here prediction based on only i/p variable
+
+1)Supervised Learning :  Here i/p data should contain both i/p variables and Response variables
+                         based on i/p data patterns and based on response variables models
+                         will predict and estimate.This approach is called as supervised learning
+
+temp sales
+25    27k
+27    29k
+29    31k
+31    33k
+33    35k
+10    15k
+12   ------?--16k
+
+
+here temp--->i/p variable
+     sales-->o/p variable (or) Target variable (or) Response variable
+In ML Terminology----->i/p variables are called as features
+                       o/p varible is called as Label
+
+Note: we can have multiple i/p variables
+
+Ex:
+   Titaninc
+   Name  age class       status
+   Ajay  25   I          survived
+   Rahul 50   II         Dead
+    -    -     -           -
+
+here Name,age,class are i/p variables(Features)
+     status is          o/p variables(LAbel)
+
+predict for JAmes----?
+    JAmes  20  I         ?
+
+ex:3 Bank loan example
+
+Features-------->Name,age,income,company,exp,designation
+Label----------->Approve/rejected
+
+Name AGe income desig  status
+Ajay 40  70k    Teacher Approved
+Rahul 20  -     student rejected
+
+----------------------------------------------------------------------------------------------
+un-supervised learning: based on i/p variable we performing prediction
+                        here target variable is not involved
+
+
+temp --->for past 5 days(summer)
+41--->Mon
+42--->Tue
+41--->wed
+43--->Thu
+
+fri----temp=?----->42
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

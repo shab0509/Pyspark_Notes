@@ -1,0 +1,478 @@
+hadoop@ubuntu:~$ pyspark
+
+>>> x=10
+>>> y=20
+>>> x
+10
+>>> y
+20
+>>> type(x)
+<type 'int'>
+>>> y=4.5
+>>> y
+4.5
+>>> type(y)
+<type 'float'>
+>>> x="spark"
+>>> type(x)
+<type 'str'>
+>>> x=10
+>>> y=4
+>>> x+y
+14
+>>> x-y
+6
+>>> x*y
+40
+>>> x/y
+2
+>>> x=[30,10,40,20,50]
+>>> x
+[30, 10, 40, 20, 50]
+>>> len(x)
+5
+>>> max(x)
+50
+>>> min(x)
+10
+>>> sum(x)
+150
+>>> sum(x)/len(x)
+30
+>>> sorted(x)
+[10, 20, 30, 40, 50]
+>>> sorted(x,reverse=True)
+[50, 40, 30, 20, 10]
+>>> x[1]
+10
+>>> x[-1]
+50
+>>> x[0]
+30
+>>> x.append(60)
+>>> x
+[30, 10, 40, 20, 50, 60]
+>>> y=[15,25,35,45,55]
+>>> x.extend(y)
+>>> x
+[30, 10, 40, 20, 50, 60, 15, 25, 35, 45, 55]
+>>> x.insert(2,25)
+>>> x.insert(4,"Ajay")
+>>> x
+[30, 10, 25, 40, 'Ajay', 20, 50, 60, 15, 25, 35, 45, 55]
+>>> x.pop(2)
+25
+>>> x
+[30, 10, 40, 'Ajay', 20, 50, 60, 15, 25, 35, 45, 55]
+>>> x.pop(-1)
+55
+>>> x
+[30, 10, 40, 'Ajay', 20, 50, 60, 15, 25, 35, 45]
+>>> x.remove(50)
+>>> x
+[30, 10, 40, 'Ajay', 20, 60, 15, 25, 35, 45]
+>>> x.remove('Ajay')
+>>> x=[5,3,1,4,2]
+>>> x.sort()
+>>> x
+[1, 2, 3, 4, 5]
+>>> x.reverse()
+>>> x
+[5, 4, 3, 2, 1]
+>>> x=[101,"Ajay",90870.40]
+>>> x[1][2]
+'a'
+>>> # 1)List-->[] 2)tuple-->() 3)set-->{ }  4)dict--->{k:v}
+... 
+>>> #List, set and dictionary---->mutable->changes allowed
+... 
+>>> #Tuple---->immutable--->changes not allowed
+... 
+>>> x=10,20,30
+>>> type(x)
+<type 'tuple'>
+>>> x=(10)
+>>> type(x)
+<type 'int'>
+>>> x=(10,)
+>>> type(x)
+<type 'tuple'>
+>>> city="mumbai"
+>>> type(city)
+<type 'str'>
+>>> city="mumbai",
+>>> type(city)
+<type 'tuple'>
+>>> x,y=(10,20)
+>>> x
+10
+>>> y
+20
+>>> x=y=(10,20)
+>>> x
+(10, 20)
+>>> y
+(10, 20)
+>>> x=(10,20,30)
+>>> y=(40,50)
+>>> x+y
+(10, 20, 30, 40, 50)
+>>> x=(10,20,30)
+>>> x*3
+(10, 20, 30, 10, 20, 30, 10, 20, 30)
+>>> x="hello"
+>>> x*3
+'hellohellohello'
+>>> x*5
+'hellohellohellohellohello'
+>>> #----------------------------------------
+... 
+>>> #set()
+... 
+>>> x={10,20,30,40,10,20,30}
+>>> len(x)
+4
+>>> x
+set([40, 10, 20, 30])
+>>> x[0]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'set' object does not support indexing
+>>> emp=[[101,"Ajay",30000],[102,"Rahul",40000]]
+>>> emp[0]
+[101, 'Ajay', 30000]
+>>> emp[1]
+[102, 'Rahul', 40000]
+>>> x={{1,2,3},{4,5,6}}
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: unhashable type: 'set'
+>>> 
+>>> x={10,20,30,40,50}
+>>> x.add(60)
+>>> x
+set([40, 10, 50, 20, 60, 30])
+>>> x.remove(40)
+>>> x
+set([10, 50, 20, 60, 30])
+>>> y=x.copy()
+>>> y
+set([60, 10, 20, 50, 30])
+>>> x={10,20,30,40,50}
+>>> y={10,20,60,70,80}
+>>> x.union(y)
+set([70, 40, 10, 80, 50, 20, 60, 30])
+>>> x.intersection(y)
+set([10, 20])
+>>> x-y
+set([40, 50, 30])
+>>> y-x
+set([80, 60, 70])
+>>> #============================================
+... 
+>>> #Dictionary--->{k:v}
+... 
+>>> x={"Name":"Ajay","age":25,"sal":90000}
+>>> x
+{'age': 25, 'Name': 'Ajay', 'sal': 90000}
+>>> x["Name"]
+'Ajay'
+>>> x["sal"]
+90000
+>>> x.keys()
+['age', 'Name', 'sal']
+>>> x.values()
+[25, 'Ajay', 90000]
+>>> x["city"]="hyd"
+>>> x
+{'city': 'hyd', 'age': 25, 'Name': 'Ajay', 'sal': 90000}
+>>> x.pop("age")
+25
+>>> x
+{'city': 'hyd', 'Name': 'Ajay', 'sal': 90000}
+>>> #----------------------------------------------------------
+... 
+>>> #if-else
+... 
+>>> if(x>0):
+...     print("positive No")
+... else:
+...     print("Negative No")
+... 
+positive No
+>>> #ex:2
+... 
+>>> time=19.59
+>>> if(time<=12.00):
+...    print("Good Morning!!!")
+... elif(time<=16.00):
+...    print("Good Afternoon")
+... elif(time<=20.00):
+...   print("Good Evening!!!")
+... else:
+...   print("Good Night!!!")
+... 
+Good Evening!!!
+>>> #--------------------------------------------------------
+... 
+>>> import datetime
+>>> print(datetime.datetime.now())
+2023-12-17 06:34:49.423449
+>>> #========================================================
+... 
+>>> #for loop: For loop executes set of stmts for evey element
+... # of collection object
+... 
+>>> x=[10,20,30,40,50]
+>>> for p in x:
+...    print(p)
+... 
+10
+20
+30
+40
+50
+>>> for p in x:
+...   print("Good Evening!!!")
+... 
+Good Evening!!!
+Good Evening!!!
+Good Evening!!!
+Good Evening!!!
+Good Evening!!!
+>>> for p in x:
+...   print(p,"Good Evening!!!")
+... 
+(10, 'Good Evening!!!')
+(20, 'Good Evening!!!')
+(30, 'Good Evening!!!')
+(40, 'Good Evening!!!')
+(50, 'Good Evening!!!')
+>>> #range(n) :generates values from 0 to n-1
+... 
+>>> for p in range(10):
+...   print(p)
+... 
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+>>> for q in range(10,20):
+...   print(q)
+... 
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+>>> for p in range(20,30,2):
+...   print(p)
+... 
+20
+22
+24
+26
+28
+>>> for p in range(40,30,-1):
+...   print(p)
+... 
+40
+39
+38
+37
+36
+35
+34
+33
+32
+31
+-----------------------------------------------------------------------------------------------
+Function : block of stmts which performs particular task
+
+-Functions are not executed automatically, 
+-To execute functions, we need to make a function call
+
+-we can make 'n' number of function calls
+
+-Function defined by using a keyword def
+-all stmts within the function should follow the indentation
+
+syntax for defining function in python
+
+def functionname():
+     stmt1
+     stmt2
+     stmt3
+     return stmt
+
+ex:
+
+>>> def display():      #defining a function
+...    print("Hello")
+...    print("Good Evening...")
+... 
+>>> display()           #Calling a function
+Hello
+Good Evening..
+
+-------------------------------------------
+Function wth arguments
+
+>>> def compute(x,y):
+...    z=x+y
+...    print(z)
+... 
+>>> compute(10,20)
+30
+>>> 
+----------------------------------------------
+Functions with arguments and with return type
+
+>>> def show(x,y):
+...   z=x+y
+...   return z
+... 
+>>> c=show(10,20)
+>>> print(c)
+30
+
+-------------------------------------------------------------------------------------------
+Lambda function : A Function without any name is called as lambda function
+
+If a function doesnt have a name, then assign that function to a variable
+and the variable behaves like the function name
+
+syntax for defining a lambda function
+
+lambda arguments :expression
+
+#Assign this lambda function to a variable and the variable behaves like the functionname
+
+>>> #lamda function to square a number
+... 
+>>> f=lambda x:x*x
+>>> f(10)
+100
+
+Note: In lambda function,we can provide multiple arguments but only one expression
+
+>>> f2=lambda x,y:x*y
+>>> f2(10,20)
+200
+
+In which situations,we go for lambda function-->when using one function as a argument to
+another function
+
+Mostly lambda function used i  other functions like filter,map functions
+
+-------------------------------------------------------------------------------------------------
+filter(): for filtering data
+
+filter function takes 2 arguments
+1.lambda function
+2.Iterable type like list
+
+
+ex:1
+>>> x=[10,20,30,40,50]
+>>> #Task: Filter only those whose value >20
+... 
+>>> res=filter(lambda y:y>20,x) #here y--->indicates each element of list--->which is integer
+>>> res
+[30, 40, 50]
+--------------------------------------------------------------------------------------------
+>>> emps=[[101,"Miller",10000,'m',11,'hyd'],[102,'blake',20000,'m',12,'pune'], 
+[103,'sony',30000,'f',11,'pune'],[104,'sita',40000,'f',12,'hyd']]
+
+>>> #Task: filter only emps who belongs to the city hyd
+... 
+>>> res=filter(lambda x:x[5]=='hyd',emps)
+>>> res
+[[101, 'Miller', 10000, 'm', 11, 'hyd'], [104, 'sita', 40000, 'f', 12, 'hyd']]
+---------------------------------------------------------------------------------------------
+>>> #Task 2: filter only male emp records
+... 
+>>> res=filter(lambda x:x[3]=='m',emps)
+>>> res
+[[101, 'Miller', 10000, 'm', 11, 'hyd'], [102, 'blake', 20000, 'm', 12, 'pune']]
+-----------------------------------------------------------------------------------------------
+>>> #Tasks 3: Filter those whose sal>20000
+... 
+>>> res=filter(lambda x:x[2]>20000,emps)
+>>> res
+[[103, 'sony', 30000, 'f', 11, 'pune'], [104, 'sita', 40000, 'f', 12, 'hyd']]
+
+----------------------------------------------------------------------------------------------
+Task 4: we can also provide multiple conditions
+        Filter those whose sal>20000 and belongs to dno12
+
+>>> res=filter(lambda x:x[2]>20000 and x[4]==12,emps)
+>>> res
+[[104, 'sita', 40000, 'f', 12, 'hyd']]
+
+-----------------------------------------------------------------------------------------------
+
+map(): for each element transformation
+
+map function takes 2 arguments
+1.lambda function
+2.Iterable type like list
+
+>>> x=[10,20,30,40,50]
+>>> #Task: adding 5 to each element of list 
+>>> res=map(lambda y:y+5,x)
+>>> res
+[15, 25, 35, 45, 55]
+------------------------------------------------------------------------------
+ex:2
+
+>>> emps=[[101,"Miller",10000,'m',11,'hyd'],[102,'blake',20000,'m',12,'pune'], 
+... [103,'sony',30000,'f',11,'pune'],[104,'sita',40000,'f',12,'hyd']]
+
+>>> #Task 1: add 5000 to the sals of each employee as bonus
+... 
+>>> res=map(lambda x:x[2]+5000,emps)
+>>> res
+[15000, 25000, 35000, 45000]
+>>> res=map(lambda x:[x[0],x[1],x[2]+5000,x[3],x[4],x[5]],emps)
+>>> res
+[[101, 'Miller', 15000, 'm', 11, 'hyd'], [102, 'blake', 25000, 'm', 12, 'pune'], [103, 'sony', 35000, 'f', 11, 'pune'], [104, 'sita', 45000, 'f', 12, 'hyd']]
+>>> x=[10,20,30,40,50,60]
+>>> x[2:6]
+[30, 40, 50, 60]
+>>> #Task 2: transform each empname to start with uppercase
+... 
+>>> res=map(lambda x:[x[0],x[1].capitalize(),x[2],x[3],x[4],x[5]],emps)
+>>> res
+[[101, 'Miller', 10000, 'm', 11, 'hyd'], [102, 'Blake', 20000, 'm', 12, 'pune'], [103, 'Sony', 30000, 'f', 11, 'pune'], [104, 'Sita', 40000, 'f', 12, 'hyd']]
+
+-----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+

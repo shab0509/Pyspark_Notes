@@ -1,0 +1,52 @@
+
+filters:
+-------
+filtering nulls or blankspaces:
+------------------------------
+>>> line="              spark is for processing             "
+>>> words=line.split(" ")
+>>> print(words)
+['', '', '', '', '', '', '', '', '', '', '', '', '', '', 'spark', 'is', 'for', 'processing', '', '', '', '', '', '', '', '', '', '', '', '', '']
+>>> #converting this list to a RDD
+... 
+>>> words1=sc.parallelize(words)
+>>> words2=words1.filter(lambda x:x!='')
+>>> words2.collect()
+['spark', 'is', 'for', 'processing']
+>>> y=words2.collect()
+>>> z=" ".join(y)
+>>> print(z)
+spark is for processing
+
+-------------------------------------------------------------------------------------------------
+same task using functions/methods
+
+>>> line="              spark is for processing             "
+>>> line.strip()
+'spark is for processing'
+
+----------------------------------------------------------------------------------
+#or
+
+>>> y
+['spark', 'is', 'for', 'processing']
+>>> str=""
+>>> for p in y:
+...    str=str+p+" "
+... 
+>>> print(str)
+spark is for processing 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

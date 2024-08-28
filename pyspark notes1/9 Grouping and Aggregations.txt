@@ -1,0 +1,75 @@
+
+
+#Groupings and Aggregations
+
+case 1:Single Grouping and Single Aggregation
+
+case 2:multi Grouping and single Aggregation
+
+case 3:Single Grouping and multiple aggregation
+
+case 4:multi Grouping and multiple aggregation
+
+
+---------------------------------------------------------------------------------------------
+case 1:Single Grouping and Single Aggregation
+
+Task :select dno,sum(sal) from emp group by dno
+
+o/p:  11 totsal
+      12 totsal
+      13 totsal
+
+>>> r1=sc.textFile("hdfs://localhost:9000/pyspark630pm/emp1.txt")
+>>> r1.collect()
+[u'101,Miller,10000,m,11', u'102,Blake,20000,m,12', u'103,Sony,30000,f,11', u'104,Sita,40000,f,12', u'105,James,50000,m,13']
+>>> #step 2: splitting each record--->we get list for every record
+... 
+>>> r2=r1.map(lambda x:x.split(","))
+>>> r2.collect()
+[[u'101', u'Miller', u'10000', u'm', u'11'], [u'102', u'Blake', u'20000', u'm', u'12'], [u'103', u'Sony', u'30000', u'f', u'11'], [u'104', u'Sita', u'40000', u'f', u'12'], [u'105', u'James', u'50000', u'm', u'13']]
+>>> #step 3:Extract therequired fields
+... 
+>>> r3=r2.map(lambda x:(x[4],int(x[2]))
+... )
+>>> r3.collect()
+[(u'11', 10000), (u'12', 20000), (u'11', 30000), (u'12', 40000), (u'13', 50000)]
+>>> res=r3.reduceByKey(lambda x,y:x+y)
+>>> res.collect()
+[(u'11', 40000), (u'13', 50000), (u'12', 60000)]
+
+----------------------------------------------------------------------------------------------
+ex:2
+    m----->totsal
+    f----->totsal
+#Step 1: Loading data
+>>> r1=sc.textFile("hdfs://localhost:9000/pyspark630pm/emp1.txt")
+>>> r1.collect()
+[u'101,Miller,10000,m,11', u'102,Blake,20000,m,12', u'103,Sony,30000,f,11', u'104,Sita,40000,f,12', u'105,James,50000,m,13']
+
+
+>>> #step 2: splitting based on coma
+... 
+>>> r2=r1.map(lambda x:x.split(","))
+>>> r2.collect()
+[[u'101', u'Miller', u'10000', u'm', u'11'], [u'102', u'Blake', u'20000', u'm', u'12'], [u'103', u'Sony', u'30000', u'f', u'11'], [u'104', u'Sita', u'40000', u'f', u'12'], [u'105', u'James', u'50000', u'm', u'13']]
+
+
+>>> #step 3:create(k,v) pair-->(sex,sal) pair
+... 
+>>> sexsalpair=r2.map(lambda x:(x[3],int(x[2])))
+>>> sexsalpair.collect()
+[(u'm', 10000), (u'm', 20000), (u'f', 30000), (u'f', 40000), (u'm', 50000)]
+
+
+>>> #step 4:Applying reduceByKey() 
+>>> res=sexsalpair.reduceByKey(lambda x,y:x+y)
+>>> res.collect()
+[(u'm', 80000), (u'f', 70000)]
+----------------------------------------------------------------------------------------------
+
+
+
+
+
+

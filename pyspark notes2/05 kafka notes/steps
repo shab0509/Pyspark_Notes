@@ -1,0 +1,180 @@
+Steps in Kafa Execution:
+
+step 1: start zookeeper
+step 2: start broker(server)
+step 3: create topics
+step 4: start producer
+step 5: start consumer
+------------------------------------------------------------------------------------------------------
+
+First copy kafka software onto Desktop and rename it as kafka1
+
+lenovo@lenovo-Lenovo-G450:~$ cd Desktop
+lenovo@lenovo-Lenovo-G450:~/Desktop$ cd kafka
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ ls
+bin  config  libs  LICENSE  NOTICE  site-docs
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ ls config/
+connect-console-sink.properties    connect-file-sink.properties    connect-standalone.properties  producer.properties     zookeeper.properties
+connect-console-source.properties  connect-file-source.properties  consumer.properties            server.properties
+connect-distributed.properties     connect-log4j.properties        log4j.properties               tools-log4j.properties
+
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ gedit config/zookeeper.properties   and check the portno of zookeeper
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ cat config/zookeeper.properties
+
+
+
+
+
+step 1: start zookeeper (in one terminal)
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/zookeeper-server-start.sh config/zookeeper.properties
+
+	at org.apache.zookeeper.server.NIOServerCnxnFactory.run(NIOServerCnxnFactory.java:203)
+	we see this
+
+
+step 2: start broker(server) in one terminal
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ jps
+2657 SecondaryNameNode
+3841 Jps
+2998 NodeManager
+2870 ResourceManager
+2494 DataNode
+3582 QuorumPeerMain
+2367 NameNode
+
+before starting broker(server), first check server.properties files
+
+In server.properties file, we need to check or configure 4 things
+1)broker1d=0, if only one broker, 
+  brokerid=1, if we have second broker
+  brokerid=2, if we have third broker
+2)broker portno=9092 
+  if multiple brokers then specify 9092,9093,9094.....
+3)log.dirs=/tmp/kafka-logs
+  for 2nd broker,we need to change the log dir
+4)Zookeeper portno=2181 or any other port that was specified in zookeeper.properties
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ gedit config/server.properties
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ cat config/server.properties
+
+
+
+
+Starting the broker:
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-server-start.sh config/server.properties
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+step 3: creating topic(in one terminal)
+
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic mytopic1
+Created topic "mytopic".
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 2 --topic mytopic7
+Created topic "mytopic7".
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-topics.sh --list --zookeeper localhost:2181 
+mytopic1
+mytopic7
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+step 4: start producer (in one terminal)
+
+Lenovo-G450:~/Desktop/kafka$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic mytopic1
+hello
+how are you?
+bye
+helloooooooooooooooooooooooooooooooooooooooooooooooooooo
+haiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+enti sangathulu
+
+
+step 5: start consumer (in one terminal)
+
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic mytopic1 --from-beginning
+Using the ConsoleConsumer with old consumer is deprecated and will be removed in a future major release. Consider using the new consumer by passing [bootstrap-server] instead of [zookeeper].
+hello
+how are you?
+bye
+helloooooooooooooooooooooooooooooooooooooooooooooooooooo
+haiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+
+step 6: Killing Consumer:stop consumer (ctrl+c) and restart
+
+Here no Probem to producer
+^CProcessed a total of 5 messages
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic mytopic --from-beginning
+Using the ConsoleConsumer with old consumer is deprecated and will be removed in a future major release. Consider using the new consumer by passing [bootstrap-server] instead of [zookeeper].
+hello
+how are you?
+bye
+helloooooooooooooooooooooooooooooooooooooooooooooooooooo
+haiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+
+step 7: kill producer : stop producer(ctrl+c) and restart
+
+^Clenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ bin/kafka-console-producer.sh --broker-list localhost:9092 --topic mytopic
+enti sangathulu?
+msg1
+msg2
+msg3
+
+observe in consumer
+
+hello
+how are you?
+bye
+helloooooooooooooooooooooooooooooooooooooooooooooooooooo
+haiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii
+enti sangathulu?
+msg1
+msg2
+msg3
+
+step 8:kill server:stop server (broker) (ctrl+c)
+
+producer/consumer will be running ---------->but they cannot read/write
+
+
+lenovo@lenovo-Lenovo-G450:~/Desktop/kafka$ 
+
+observe the producer
+
+msg1
+msg2
+msg3
+
+still running
+
+observe the consumer
+
+still running
+
+[2017-09-14 15:59:09,361] WARN [console-consumer-55534_lenovo-Lenovo-G450-1505383752178-12290207-leader-finder-thread], Failed to find leader for Set(mytopic-0) (kafka.consumer.ConsumerFetcherManager$LeaderFinderThread)
+kafka.common.KafkaException: fetching topic metadata for topics [Set(mytopic)] from broker [ArrayBuffer()] failed
+	at kafka.client.ClientUtils$.fetchTopicMetadata(ClientUtils.scala:74)
+	at kafka.client.ClientUtils$.fetchTopicMetadata(ClientUtils.scala:95)
+	at kafka.consumer.ConsumerFetcherManager$LeaderFinderThread.doWork(ConsumerFetcherManager.scala:68)
+	at kafka.utils.ShutdownableThread.run(ShutdownableThread.scala:63)
+
+
+still running
+
+but cant read from topic, as broker is down , so no fault tolerance in the case of single broker Architecture..
+
+
+
+
+
