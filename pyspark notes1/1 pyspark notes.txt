@@ -1,7 +1,7 @@
-
-
+#Lecture 1 
+------------------
 Pyspark:
---------
+------------------
 
 1.what is Apache Spark
 
@@ -16,9 +16,9 @@ Pyspark:
 6.Real-life usage of Pyspark
 
 7.Pyspark Job market
------------------------------------------------------------------------------------------------
 
 
+------------------
 Evolution of Spark:
 ------------------
 -Spark was developed by MAtei Zaharia in AMP lab, Berkeley in the year 2009
@@ -27,89 +27,78 @@ Evolution of Spark:
 
 -Spark was donated to Apache Software Foundation in the year 2013
 
-------------------------------------------------------------------------------------------------
+------------------
 what is Apache Spark
+------------------
 It is a -open source
-       -distributed cluster-computing framework
-       -with in-memory computing
-       -in parallel process style
-       -used for large scale dataprocessing
+        -distributed cluster-computing framework
+        -with in-memory computing
+        -in parallel process style
+        -used for large scale dataprocessing
 
 ------------------------------------------------------------------------------------------------
 In-memory computation: Here Data gets loaded into Ram and gets processed within Ram
-                      Here data is divided into partitions and the partitions are distributed
-                      across multiple Rams of multiple worker nodes and are processed parallely
+                       Here data is divided into partitions and the partitions are distributed
+                       across multiple Rams of multiple worker nodes and are processed parallely
 
-
------------------------------------------------------------------------------------------------
 
 It is a general engine for Bigdata analysis
                           -Processing and computation
 
-------------------------------------------------------------------------------------------------
+------------------
 why Pyspark?
-
+------------------
 -Pyspark is the Python API to use Spark
-
 -Pyspark is a lightening fast technology which is designed for Fast computation
 
  pyspark used for
       -Distributed SQL
       -creating Data pipelines
       -ingesting data into database
-      -running machine Learning algorithms
+      -running ML algorithms
       -working graphs
       -working with datastreams
 
------------------------------------------------------------------------------------------------
 spark---->scala
 pyspark-->python
 
------------------------------------------------------------------------------------------------
-
+------------------
 Need for Pyspark:
-----------------
+------------------
 
-pyspark=python+spark
+pyspark = python + spark
 
-
-
------------------------------------------------------------------------------------------------
+------------------
 Python VS Scala
-
+------------------
        Python                  Scala
 
 1.Python is interpreted       1. Scala is statically typed
-  and dynamic typed
+  and Dynamic typed
   x=[10,20,30]
   x=4.5
   x=10
 
-2.Python has a huge community 2.scala community is smaller
+2.Python has a huge community 2.Scala community is smaller
 
-3.python is slower than scala 3.scala is 10times faster than python
+3.Python is slower than scala 3.Scala is 10 times faster than python
 
-4.Python contains powerfull libraries 4.scala has no such
-  for ML,Graph algorithms
+4.Python contains powerfull   4.Scala has no such
+  libraries for ML,Graph algorithms
 
------------------------------------------------------------------------------------
 Flink
 before spark 1.6 < flink
 spark 1.6onwards ~ flink
 spark 2          > flink
 
------------------------------------------------------------------------------------------------
+------------------
 Real life usage of Pyspark:
-
+------------------
 1. Commercial sector
-
 2. Health care
-
 3. Entertainment Industry
-
 4. Trading and E-commerce
-
-5. Tourism Industry:
+5. Tourism Industry
 
 -----------------------------------------------------------------------------------------------
 Spark can be coded with
@@ -125,21 +114,21 @@ Execution Generations
 2)Tej
 3)Spark
 
-Tej Vs Spark ------>Both follows DAG model(Directed-Acyclic Graph)
-                    Tej doesnt support in-memory computation
-                    but spark is in-memory computing system,so spark is faster than Tej
+Tej Vs Spark ------> Both follows DAG model(Directed-Acyclic Graph)
+                     Tej doesnt support in-memory computation
+                     but spark is in-memory computing system,so spark is faster than Tej
 -----------------------------------------------------------------------------------------------
-Other in-memory Computuing Systems in the market---------->SAP HANA
+Other in-memory Computuing Systems in the market ---------->SAP HANA
 
-HANA Vs Spark-------->Both follows in-memory computation
-                       But HANA is not distributed
-                       But Spark is distributed RAM
+HANA Vs Spark --------> Both follows in-memory computation
+                        But HANA is not distributed
+                        But Spark is distributed RAM
 
 -----------------------------------------------------------------------------------------------
 
-so for Huge Storage------------->Hadoop
-   for fast processing---------->pyspark
-                                 combinely both can store and process huge data
+for Huge Storage------------->Hadoop
+for fast processing---------->pyspark
+                            combinely both can store and process huge data
 
 
 -----------------------------------------------------------------------------------------------
@@ -155,61 +144,51 @@ MapReduce VS Spark
 MapReduce DrawbackS:
 
 1.Transformations cannot be re-used
-
 2.Bad for Iterative Algorithms
-
 3.Not a flexible parallel process
-
 4.slow processing
 
 -----------------------------------------------------------------------------------------------
 Spark Vs PiG
 
--Both are Data flow LAnguages
-
+-Both are Dataflow Languages
 -But in PIG, the entire Dataflow is converted into 1 MR job, but again MR is bad
 
 ------------------------------------------------------------------------------------------------
-pySpark Features and Advantages:
+Pyspark Features and Advantages:
 
-1)In-Memory computation( TEj)
-2)Distributed Excution (HAna)
-3)Flexible parallel process(MR)
+1)In-Memory computation (TEJ)
+2)Distributed Execution (Hana)
+3)Flexible parallel process (MR)
 4)Transformations can be re-used
 5)Good For Iterative Algorithms
 6)High Speed processing
-7)Multi-Language support---->python,scala,Java,R-Language
-8)Support Advanced Analytics---->ML ,Graph,datastreams
-9)Lazy Evoluted
-10)Persitence Feature
+7)Multi-Language support ----> Python,Scala,Java,R
+8)Support Advanced Analytics ----> ML,Graph,Datastreams
+9)Lazy Evaluation
+10)Persistence 
 11)Powerfull Fault-Tolerant model
 
 -----------------------------------------------------------------------------------------------
 
 Yahoo---->Table---->100TB------->1024 columns
-
 Task---->sorting---->16cols
 
 Timetaken
 
 1)Orcale----->3.5days
-
 2)mysql------>6days
-
 3)Teradata--->4.5hrs
-
 4)Netezza --->3hrs
-
 5)hadoop----->3.2mins
               1.2mins
-
+              
 Spark----->100 times faster than hadoop(mapReduce)
 
-Motivation towards spark
-------------------------
-
+------------------
+Motivation towards Spark
+------------------
 spark sorted 100TB data using 206 nodes in 23 minutes
-
 previous world record was 72 minutes set by Hadoop MR cluster using 2100nodes
 
 in memory------>100 times faster than MR
@@ -218,18 +197,12 @@ in Disk ------->10 times faster than MR
 -----------------------------------------------------------------------------------------------
 RDD(Resilient Distributed Datasets)
 
--pySpark data objects are called as RDDs
-
+-PySpark data objects are called as RDDs
 -RDDs are sub-divided into partitions
-
 -These partitons are distributed across multiple RAMs of multiple worker nodes(CPUs)
-
 -Here the advantage--->huge datasets(RDD) also can be loaded
-
 -RDD programming style--------->"Dataflow"
-
 -Dataflow is a sequence collection of pipes(RDDs)
-
 -A Pipe(RDD) is any data operation,
  the operation can be
                     -loading data
