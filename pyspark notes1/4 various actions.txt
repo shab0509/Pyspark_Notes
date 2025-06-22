@@ -30,7 +30,7 @@ The following are some of the actions
 13.saveAsTextFile(path)
 
 ----------------------------------------------------------------------------------------------
-1.collect() :It will collec all partitions of different slave machines into client machile
+1.collect() :It will collect all partitions of different slave machines into client machile
 >>> x=[10,20,30,40,50]
 >>> r1=sc.parallelize(x)
 >>> r1.collect()
