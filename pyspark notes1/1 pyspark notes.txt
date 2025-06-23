@@ -61,7 +61,7 @@ pyspark = python + spark
 ------------------
 Python VS Scala
 ------------------
-       Python                  Scala
+       Python                        Scala
 
 1.Python is interpreted       1. Scala is statically typed
   and Dynamic typed
