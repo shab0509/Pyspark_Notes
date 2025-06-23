@@ -4,27 +4,18 @@ Pyspark:
 ------------------
 
 1.what is Apache Spark
-
 2.Why Pyspark
-
 3.Need for Pyspark
-
 4.Spark Python Vs Scala
-
 5.Pyspark features
-
 6.Real-life usage of Pyspark
-
 7.Pyspark Job market
-
 
 ------------------
 Evolution of Spark:
 ------------------
 -Spark was developed by MAtei Zaharia in AMP lab, Berkeley in the year 2009
-
 -Spark was made opensourced in the year 2010
-
 -Spark was donated to Apache Software Foundation in the year 2013
 
 ------------------
@@ -65,7 +56,6 @@ pyspark-->python
 ------------------
 Need for Pyspark:
 ------------------
-
 pyspark = python + spark
 
 ------------------
