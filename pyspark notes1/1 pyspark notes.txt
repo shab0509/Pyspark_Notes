@@ -157,7 +157,7 @@ Pyspark Features and Advantages:
 8)Support Advanced Analytics ----> ML,Graph,Datastreams
 9)Lazy Evaluation
 10)Persistence 
-11)Powerfull Fault-Tolerant model
+11)Powerful Fault-Tolerant model
 
 -----------------------------------------------------------------------------------------------
 
@@ -188,8 +188,8 @@ in Disk ------->10 times faster than MR
 RDD(Resilient Distributed Datasets)
 
 -PySpark data objects are called as RDDs
--RDDs are sub-divided into partitions
--These partitons are distributed across multiple RAMs of multiple worker nodes(CPUs)
+-RDDs are subdivided into partitions
+-These partitions are distributed across multiple RAMs of multiple worker nodes(CPUs)
 -Here the advantage--->huge datasets(RDD) also can be loaded
 -RDD programming style--------->"Dataflow"
 -Dataflow is a sequence collection of pipes(RDDs)
@@ -205,7 +205,9 @@ In Spark,Dataflow is executed in sequence i.e RDD by RDD(one after the another)
 with in-memory computation and persistence feature
 
 
-If  a  RDD has got 30 partitions , then all these 30 partions can executed in parallel
+If  a  RDD has got 30 partitions , then all these 30 partitions can be executed in parallel
+
+
 -----------------------------------------------------------------------------------------------
 on a RDD , 2 types of operations can be performed
 i)Transformations
@@ -294,7 +296,7 @@ step1 :Initially all the RDD's are declared, they are not stored anywhere
        we load and execute them on demand by performing an action. this type of evolution
        is called as Lazy Evolution
 
-step 2: when action is performed , flow execution will start from its root RDD or avialable RDD
+step 2: when action is performed, flow execution will start from its root RDD or available RDD
 
 step 3: During flow execution,Each RDD partition will be loaded into RAM of cluster machines
         and computed at RAM.
