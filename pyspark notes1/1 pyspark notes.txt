@@ -108,7 +108,7 @@ Tej Vs Spark ------> Both follows DAG model(Directed-Acyclic Graph)
                      Tej doesnt support in-memory computation
                      but spark is in-memory computing system,so spark is faster than Tej
 -----------------------------------------------------------------------------------------------
-Other in-memory Computuing Systems in the market ---------->SAP HANA
+Other in-memory Computing Systems in the market ---------->SAP HANA
 
 HANA Vs Spark --------> Both follows in-memory computation
                         But HANA is not distributed
@@ -233,7 +233,7 @@ iii)Aggregated Transformation :
 -----------------------------------------------------------------------------------------------
 Actions: when an action is performed on a RDD, then only the dataflow will be executed
          from the root RDD.
-The following are the some of the actions
+The following are some of the actions:
 
 1.collect():It will collect all the partitions data from different slave machines into client machine
             ex:rdd4.collect()
@@ -245,7 +245,7 @@ The following are the some of the actions
            similar to limit in sql
            ex:  RDD.take(10)
                 means takes the 1st 10 records
-                if the parition1 is having only 5 recs then it takes
+                if the paritition1 is having only 5 recs then it takes
                                                                     5recs from partition1
                                                                     5recs from partition2
 4.saveAsTextFile(): storing the results into hdfs file
@@ -289,7 +289,6 @@ what is lazy evolution in pyspark
 Executing the dataflow on demand by performing an action is called as Lazy evolution
 
 -----------------------------------------------------------------------------------------------
-
 Steps in RDD Computation:
 
 step1 :Initially all the RDD's are declared, they are not stored anywhere
@@ -318,7 +317,6 @@ step 7: Finally the RDD stored in RAM will be unpersisted when session is closed
 
 
 -----------------------------------------------------------------------------------------------
-
 Fault Tolerant model in pyspark(while executing the RDDs)
 
 case 1: when the current RDD is down
@@ -327,7 +325,7 @@ case 1: when the current RDD is down
          R1----o/p-------i/p---R2(current)
       p1 p2 p3               p1 p2 p3
 
- During the execution of current RDD(R2),if anyone  of the partition  machine is down,
+ During the execution of current RDD(R2),if anyone of the partition machine is down,
  then all the current RDD partitions(p1,p2,p3 of R2) will be de-allocated(cleared from RAM)
  and re-initiated or re-loaded in other slaves by taking i/p from its previous RDD(R1)
  The 3 partitions are stored in 3 different machines excluding the machine which is down
@@ -373,11 +371,11 @@ Case 4: when 2 RDD's are persisted
      case i: If R5 machine is down what happens??
               flow-will be re-executed from R3 to R5 automatically and R5 will be re-persisted
 
-     case ii: IF R3 nachine is down, flow will be re-executed from R1 to R3 automatically
-              and R3 will be re-persisted
+     case ii: IF R3 machine is down,
+              flow will be re-executed from R1 to R3 automatically and R3 will be re-persisted
 
 -----------------------------------------------------------------------------------------------
-importance of persistence:
+Importance of persistence:
 
 R1-R2-R3.................R100
 
@@ -415,26 +413,22 @@ RDD.unpersist()---->unpersist happens immediately on-demand
 RDD.persist()----->but persist wont happen immediately, it happens during the flow execution
 
 -----------------------------------------------------------------------------------------------
-
-persistence  of a RDD
+Persistence  of a RDD
 ---------------------
-persisting an RDD means---->making the RDD avaialable in the Ram,
+Persisting an RDD means---->making the RDD avaialable in the Ram,
 evethough the next RDD is ready and computed also the persisted RDD wont be removed from the
 RAM.
-Advantage of persisting RDD:
 
+Advantage of persisting RDD:
 IF a RDD is persisted, the other Dataflows can re-use the executed trandformations
 i.e Transformation can be re-used.
 
-Rules in persisting a RDD:
+Rules in persisting an RDD:
 -------------------------
-1.For persisting an RDD, atleast one flow should be executed
-
+1. For persisting an RDD, atleast one flow should be executed
 2. A RDD will be persisted when first time they are loaded and computed
-    even though the persist option is provided in the later steps
-
+   even though the persist option is provided in the later steps
 3. The RDD whose output is commonly used by multiple flows, persist that RDD
-
 4. we need to persist the RDD before action is performed
 
 
@@ -470,5 +464,5 @@ r5.collect()
  r2 i/p is r1
  r1 i/p is file
 
-whereever you specify the persist option,it will be persisted only when it is first time
+where ever you specify the persist option,it will be persisted only when it is first time
 loaded and computed

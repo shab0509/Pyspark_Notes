@@ -4,29 +4,17 @@ Actions:whenever action is performed, the flow executes from its root RDD
 The following are some of the actions
 
 1.collect()
-
 2.count()
-
 3.countByKey()
-
 4.countByValue()
-
 5.take(num)
-
 6.top(num)
-
 7.first()
-
 8.reduce()
-
 9.sum()
-
 10.max()
-
 11.min()
-
 12.count()
-
 13.saveAsTextFile(path)
 
 ----------------------------------------------------------------------------------------------
