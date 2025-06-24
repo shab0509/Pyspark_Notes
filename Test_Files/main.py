@@ -1,19 +1,18 @@
- 
 from pyspark.sql import SparkSession
+import os
+import sys
 
+os.environ['SPARK_HOME'] ="/Users/shabivictor/Shabi_Personal/Spark/spark-4.0.0-bin-hadoop3"
+sys.path.append("/Users/shabivictor/Shabi_Personal/Spark/spark-4.0.0-bin-hadoop3/bin")
 # Step 1: Initialize SparkSession
-spark = SparkSession.builder \
-    .appName("BasicPySparkApp") \
+sc = SparkSession.builder \
+    .master("local") \
+    .appName("Pyspark_Shabi") \
     .getOrCreate()
 
-# Step 2: Create a sample DataFrame
-data = [("Alice", 28), ("Bob", 35), ("Cathy", 23)]
-columns = ["Name", "Age"]
-df = spark.createDataFrame(data, columns)
+r1 = sc.parallelize([10, 20, 30, 40, 50])
+r2 = sc.parallelize([10, 20, 30, 60, 70])
 
-# Step 3: Show the DataFrame
-df.show()
-
-# Step 4: Filter rows where Age > 25
-filtered_df = df.filter(df.Age > 25)
-filtered_df.show()
+res = r1.union(r2)
+res2 = res.collect()
+print(res2)
