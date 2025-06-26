@@ -157,7 +157,7 @@ ex:2
 >>> res.collect()
 [40, 10, 20, 30]
 
-applying multiple Transdormations----->distinct and filter
+applying multiple Transformations----->distinct and filter
 >>> r1=sc.parallelize([10,20,30,40,10,20,30])
 >>> res=r1.distinct().filter(lambda x:x>20)   
 >>> res.collect()
@@ -262,7 +262,7 @@ A=1  B=1
  o/p:  (1,1)
        (2,2)
        (3,3)
-2)Left outer join :Matchings +unmatched of left side i.e total presence of leftside
+2)Left outer join :Matchings + unmatched of left side i.e total presence of leftside
  o/p:
        (1,1)
        (2,2)
@@ -271,7 +271,7 @@ A=1  B=1
        (5, )
        (6, )
 
-3)Right outer join:Matchings +unmatched of right side i.e total presence of righttside
+3)Right outer join:Matchings + unmatched of right side i.e total presence of righttside
  o/p:
        (1,1)
        (2,2)
@@ -280,8 +280,8 @@ A=1  B=1
        ( ,8)
        ( ,9)
 
-4)Full outer join :Matchings +unmatched of left side i.e total presence of leftside
-                             +unmatched of right side i.e total presence of rightside
+4)Full outer join :Matchings + unmatched of left side i.e total presence of leftside
+                             + unmatched of right side i.e total presence of rightside
  o/p:
        (1,1)
        (2,2)

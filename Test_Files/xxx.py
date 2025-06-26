@@ -1,17 +1,20 @@
+
+import spark
 from pyspark.sql import SparkSession
 
 # Create a SparkSession
-spark = SparkSession.builder \
+sc = SparkSession.builder \
     .appName("BasicPySparkApp") \
     .getOrCreate()
 
-# Create a sample DataFrame
-data = [("Alice", 1), ("Bob", 2), ("Charlie", 3)]
-columns = ["Name", "ID"]
-df = spark.createDataFrame(data, columns)
+# created
+a=[10,20,30,40,50]
+b=[10,20,30,60,70]
 
-# Show the DataFrame
-df.show()
+columns = ["Age"]
+r3= spark.createDataFrame(a,schema=columns)
+r4= spark.createDataFrame(b, schema=columns)
 
-# Stop the SparkSession
-spark.stop()
+res1= r3.union(r4)
+res2= res1.collect()
+print(res2)
