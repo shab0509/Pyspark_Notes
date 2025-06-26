@@ -1,20 +1,23 @@
-
-import spark
+from pyspark import core, RDD
 from pyspark.sql import SparkSession
+from importlib.resources import files
 
 # Create a SparkSession
 sc = SparkSession.builder \
     .appName("BasicPySparkApp") \
     .getOrCreate()
 
-# created
-a=[10,20,30,40,50]
-b=[10,20,30,60,70]
+data1=[10,20,30,40,50]
+data2=[10,20,30,60,70]
 
-columns = ["Age"]
-r3= spark.createDataFrame(a,schema=columns)
-r4= spark.createDataFrame(b, schema=columns)
+print(data1)
+print(type(data1))
+print(data2)
+print(type(data2))
 
-res1= r3.union(r4)
-res2= res1.collect()
-print(res2)
+RDD1 =sc.parallelize(data1)
+RDD2 =sc.parallelize(data2)
+print(RDD1)
+print(type(RDD1))
+print(RDD2)
+print(type(RDD2))

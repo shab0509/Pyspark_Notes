@@ -1,4 +1,6 @@
+from pyarrow import Schema
 from pyspark.sql import SparkSession
+from pyspark  import RDD
 
 # Step 1: Initialize SparkSession
 spark = SparkSession.builder \
@@ -8,6 +10,7 @@ spark = SparkSession.builder \
 # Step 2: Sample data
 data1 = [("Alice", 34), ("Bob", 45), ("Catherine", 29)]
 data2 = [("Anju", 34), ("Balli", 45), ("Rani", 29)]
+
 
 # Step 3: Define schema (column names)
 columns = ["Name", "Age"]

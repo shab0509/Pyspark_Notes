@@ -11,52 +11,59 @@ Pyspark:
 6.Real-life usage of Pyspark
 7.Pyspark Job market
 
-------------------
-Evolution of Spark:
-------------------
--Spark was developed by MAtei Zaharia in AMP lab, Berkeley in the year 2009
--Spark was made opensourced in the year 2010
--Spark was donated to Apache Software Foundation in the year 2013
+
 
 ------------------
 what is Apache Spark
 ------------------
+
+-Spark was developed by Matei Zaharia in AMP lab, Berkeley in the year 2009
+-Spark was made opensourced in the year 2010
+-Spark was donated to Apache Software Foundation in the year 2013
+
+Apache Spark is an open-source unified analytics engine used for large-scale data processing,
+hereafter referred it as Spark. Spark is designed to be fast, flexible, and easy to use,
+making it a popular choice for processing large-scale data sets.
+Spark runs operations on billions and trillions of data on
+distributed clusters 100 times faster than traditional applications.
+
+Spark can run on single-node machines or multi-node machines(Cluster).
+It was created to address the limitations of MapReduce, by doing in-memory processing.
+Spark reuses data by using an in-memory cache to speed up machine learning algorithms
+that repeatedly call a function on the same dataset.
+This lowers the latency making Spark multiple times faster than MapReduce,
+especially when doing machine learning, and interactive analytics.
+Apache Spark can also process real-time streaming.
+
 It is a -open source
         -distributed cluster-computing framework
         -with in-memory computing
         -in parallel process style
-        -used for large scale dataprocessing
-
-------------------------------------------------------------------------------------------------
-In-memory computation: Here Data gets loaded into Ram and gets processed within Ram
-                       Here data is divided into partitions and the partitions are distributed
-                       across multiple Rams of multiple worker nodes and are processed parallely
-
-
-It is a general engine for Bigdata analysis
-                          -Processing and computation
-
-------------------
-why Pyspark?
-------------------
--Pyspark is the Python API to use Spark
--Pyspark is a lightening fast technology which is designed for Fast computation
-
- pyspark used for
-      -Distributed SQL
-      -creating Data pipelines
-      -ingesting data into database
-      -running ML algorithms
-      -working graphs
-      -working with datastreams
+        -used for large scale data processing
 
 spark---->scala
 pyspark-->python
-
 ------------------
-Need for Pyspark:
+Features of Apache Spark
 ------------------
-pyspark = python + spark
+1. Python API: Provides a Python API for interacting with Spark,
+               enabling Python developers to leverage Spark’s distributed computing capabilities.
+2. Distributed Computing: PySpark utilizes Spark’s distributed computing framework to process
+                          large-scale data across a cluster of machines, enabling parallel execution of tasks.
+3. Fault Tolerance: Automatically handles fault tolerance by maintaining resilient distributed datasets (RDDs),
+                    which allows it to recover from failures gracefully.
+4. Lazy Evaluation: PySpark employs lazy evaluation, meaning transformations on data are not executed immediately but
+                    rather stored as a directed acyclic graph (DAG) of computations until an action is triggered.
+5. Integration with Python Ecosystem: Seamlessly integrates with the Python ecosystem, allowing users to leverage
+                                      popular Python libraries such as pandas, NumPy, and scikit-learn for data manipulation and machine learning tasks.
+6. Interactive Data Analysis: PySpark is well-suited for interactive data analysis and exploration,
+                              thanks to its integration with Jupyter Notebooks and interactive Python shells.
+7. Machine Learning: PySpark includes MLlib, Spark’s scalable machine learning library, which provides a wide range
+                     of machine learning algorithms for classification, regression, clustering, and more.
+8. Streaming Processing: Supports streaming processing through Spark Streaming, enabling real-time data processing and
+                         analysis on continuous data streams.
+9. SQL Support: Allows users to perform SQL queries on distributed datasets using Spark SQL,
+                providing a familiar interface for working with structured data.
 
 ------------------
 Python VS Scala
@@ -70,9 +77,7 @@ Python VS Scala
   x=10
 
 2.Python has a huge community 2.Scala community is smaller
-
 3.Python is slower than scala 3.Scala is 10 times faster than python
-
 4.Python contains powerfull   4.Scala has no such
   libraries for ML,Graph algorithms
 
@@ -94,8 +99,8 @@ Real life usage of Pyspark:
 Spark can be coded with
          -Scala (default)
          -Python
-         -JAva
-         -R-LAngauge
+         -Java
+         -R
 
 -----------------------------------------------------------------------------------------------
 Execution Generations
