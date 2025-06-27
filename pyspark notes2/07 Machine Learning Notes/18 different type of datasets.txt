@@ -1,5 +1,0 @@
-
-3 Types of Datasets used in Training in ML
-1)Train set  : The dataset which is used to train the model  
-2)Validation set :It is the subset of Trainset
-3)Test set   :The set on which we perform prediction/Analysis

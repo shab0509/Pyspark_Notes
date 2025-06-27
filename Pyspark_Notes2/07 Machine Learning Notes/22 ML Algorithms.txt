@@ -1,0 +1,79 @@
+
+MAchine Learning Algorithms are classified into 3Types
+
+1)Prediction Algorithms(Supervised)---->2Types
+                            i)Regression Algorithms-->2types
+                                                       1)Linear Regression
+                                                       2)Non-Linear Regression
+                            ii)Classification Algorithms-->6types
+                                                       1)Logistic Regression
+                                                       2)Decision Trees
+                                                       3)Random Forest
+                                                       4)Support Vector MAchine(SVM)
+                                                       5)Naive Baye's
+                                                       6)KNN(k-Nearest Neighbour)
+    
+2)Clustering Algorithms(un-supervised)---->1)Partitioning Algorithms
+                                             i)k-means
+                                            ii)k-medians
+                                           2)Hierarchical Algorithms
+                                             i)Agglomerative
+                                            ii)Divisive
+                                       
+
+3)Recommender engines----------------------->2 Types
+                                             1)PAttern Matching
+                                               i)Association
+                                              ii)Apriori
+                                             iii)FP-Growth
+
+                                             2)Collaborative filtering--->2 Types
+                                               i)UBCF---->USER-Based 
+                                              ii)IBCF---->ITEM-Based
+
+                                             3)Graph based
+
+-----------------------------------------------------------------------------------------------
+Regression Algorithms:Predicting a continuous value for a target variable
+                      ex:tommorrow what is the temp?--->Numerical value
+                      ex:what is ur age?
+                      ex:waht is ur Rank?
+ex: Linear Regression
+
+Classification Algorithms: Predicting Categorical value for a target variable
+                       ex:Tommorrow will it Rain?--->Yes/No
+                          will you pass the exam --->Yes/No
+ex:Logistic regression
+
+    Linear,non-Linear Regression(Regression)             Logistic Regression(classification)
+    ----------------------------------------             -----------------------------------
+   Here both i/p and target variables are                Here i/p variables are continuous      
+     continuous                                          whereas Target variables are categorical
+    i/p   o/p                                                i/p variables
+   temp   sales                                          ex: Age height weight      Result
+   27     31k                                                25   6.2     97          Yes
+   29     33k                                             here based on i/p variables
+   31     35k                                             whether the person will win the 
+   33     37k                                             weight lifting chamionship---->Yes/No
+   35     39k
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                      

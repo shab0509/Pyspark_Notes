@@ -1,0 +1,292 @@
+
+
+Reading JSON and writing into JSON
+
+hadoop@ubuntu:~$ cat json1
+{"name":"Blake","age":25,"sex":"m"}
+{"name":"Ramya","age":27,"sex":"f"}
+{"name":"John","age":22,"sex":"m","city":"pune"}
+{"name":"Thanu","age":24,"sex":"f","city":"hyd"}hadoop@ubuntu:~$ 
+hadoop@ubuntu:~$ 
+hadoop@ubuntu:~$ hdfs dfs -put json1 /pyspark630pm
+
+>>> df=spark.read.json("hdfs://localhost:9000/pyspark630pm/json1")
+>>> df.show()
++---+----+-----+---+
+|age|city| name|sex|
++---+----+-----+---+
+| 25|null|Blake|  m|
+| 27|null|Ramya|  f|
+| 22|pune| John|  m|
+| 24| hyd|Thanu|  f|
++---+----+-----+---+
+
+>>> df.registerTempTable("jsontab")
+>>> q1=sqlContext.sql("select * from jsontab")
+>>> q1.show()
++---+----+-----+---+
+|age|city| name|sex|
++---+----+-----+---+
+| 25|null|Blake|  m|
+| 27|null|Ramya|  f|
+| 22|pune| John|  m|
+| 24| hyd|Thanu|  f|
++---+----+-----+---+
+
+>>> #Extract only Blake record
+... 
+
+>>> q2=sqlContext.sql("select * from jsontab where name='Miller'").show()
++---+----+----+---+
+|age|city|name|sex|
++---+----+----+---+
++---+----+----+---+
+
+>>> q2=sqlContext.sql("select * from jsontab where name='Blake'").show()
++---+----+-----+---+
+|age|city| name|sex|
++---+----+-----+---+
+| 25|null|Blake|  m|
++---+----+-----+---+
+
+Task: Find the avg age values of females and males from the above data
+>>> q2=sqlContext.sql("select sex,avg(age) from jsontab group by sex").show()
+
++---+--------+ 
+|sex|avg(age)|
++---+--------+
+|  m|    23.5|
+|  f|    25.5|
++---+--------+
+
+----------------------------------------------------------------------------------
+Nested json:
+
+hadoop@ubuntu:~$ cat json2
+{"name":"Ravi","age":25,"wife":{"name":"banu","age":24},"city":"hyd"}
+{"name":"Ajay","age":26,"wife":{"name":"kavitha","age":21},"city":"pune"}
+{"name":"John","age":32,"wife":{"name":"sony","age":27},"city":"pune"}
+
+hadoop@uhadoop@ubuntu:~$ hdfs dfs -put json2 /pyspark630pm/json2
+
+
+>>> df=spark.read.json("hdfs://localhost:9000/pyspark630pm/json2")
+>>> df.show()
++---+----+----+-------------+
+|age|city|name|         wife|
++---+----+----+-------------+
+| 25| hyd|Ravi|   [24, banu]|
+| 26|pune|Ajay|[21, kavitha]|
+| 32|pune|John|   [27, sony]|
++---+----+----+-------------+
+
+>>> df.registerTempTable("jsontab2")
+>>> q1=sqlContext.sql("select * from jsontab2")
+>>> q1.show()
++---+----+----+-------------+
+|age|city|name|         wife|
++---+----+----+-------------+
+| 25| hyd|Ravi|   [24, banu]|
+| 26|pune|Ajay|[21, kavitha]|
+| 32|pune|John|   [27, sony]|
++---+----+----+-------------+
+
+>>> q2=sqlContext.sql("select name as hname,wife.name as wname,age as hage,wife.age as wage,city from jsontab2").show()
++-----+-------+----+----+----+
+|hname|  wname|hage|wage|city|
++-----+-------+----+----+----+
+| Ravi|   banu|  25|  24| hyd|
+| Ajay|kavitha|  26|  21|pune|
+| John|   sony|  32|  27|pune|
++-----+-------+----+----+----+
+-----------------------------------------------------------------------------------
+II-way: other way of loading
+
+>>> df=spark.read.format("org.apache.spark.sql.json").load("hdfs://localhost:9000/pyspark630pm/json1")
+>>> df.show()
++---+----+-----+---+
+|age|city| name|sex|
++---+----+-----+---+
+| 25|null|Blake|  m|
+| 27|null|Ramya|  f|
+| 22|pune| John|  m|
+| 24| hyd|Thanu|  f|
++---+----+-----+---+
+or
+>>> df=spark.read.format("json").load("hdfs://localhost:9000/pyspark630pm/json1")
+>>> df.show()
++---+----+-----+---+
+|age|city| name|sex|
++---+----+-----+---+
+| 25|null|Blake|  m|
+| 27|null|Ramya|  f|
+| 22|pune| John|  m|
+| 24| hyd|Thanu|  f|
++---+----+-----+---+
+
+-----------------------------------------------------------------------------------
+Reading multipleline jsonfile
+
+hadoop@ubuntu:~$ nano json3
+hadoop@ubuntu:~$ cat json3
+[{
+  "Player": "Rohith",
+  "matches" : 204, 
+  "TotalRuns":7570,
+  "HSscore":220
+ },
+ 
+{
+  "Player": "kohli",
+  "matches" : 320, 
+  "TotalRuns":12890,
+  "HSscore":310
+ },
+ 
+{
+  "Player": "Dhoni",
+  "matches" : 370, 
+  "TotalRuns":9820,
+  "HSscore":170
+ }]
+
+hadoop@ubuntu:~$ hdfs dfs -put json3 /pyspark630pm
+
+>>> df=spark.read.option("multiline","true").json("hdfs://localhost:9000/pyspark630pm/json3")
+
+>>> df.show()
++-------+------+---------+-------+
+|HSscore|Player|TotalRuns|matches|
++-------+------+---------+-------+
+|    220|Rohith|     7570|    204|
+|    310| kohli|    12890|    320|
+|    170| Dhoni|     9820|    370|
++-------+------+---------+-------+
+-----------------------------------------------------------------------------------
+
+5) Reading multiple jsonfiles at a time
+
+syntax:  df=spark.read.json(['jsonfile1path',jsonfile2path'])
+
+>>> df=spark.read.json(["hdfs://localhost:9000/pyspark630pm/json1","hdfs://localhost:9000/pyspark630pm/json1"])
+>>> df.show()
++---+----+-----+---+
+|age|city| name|sex|
++---+----+-----+---+
+| 25|null|Blake|  m|
+| 27|null|Ramya|  f|
+| 22|pune| John|  m|
+| 24| hyd|Thanu|  f|
+| 25|null|Blake|  m|
+| 27|null|Ramya|  f|
+| 22|pune| John|  m|
+| 24| hyd|Thanu|  f|
++---+----+-----+---+
+
+-----------------------------------------------------------------------------------
+6) If the schema of 2 json files are different
+
+>>> df=spark.read.json(["hdfs://localhost:9000/pyspark630pm/json1","hdfs://localhost:9000/pyspark630pm/json2"])
+>>> df.show()
++---+----+-----+----+-------------+
+|age|city| name| sex|         wife|
++---+----+-----+----+-------------+
+| 25| hyd| Ravi|null|   [24, banu]|
+| 26|pune| Ajay|null|[21, kavitha]|
+| 32|pune| John|null|   [27, sony]|
+| 25|null|Blake|   m|         null|
+| 27|null|Ramya|   f|         null|
+| 22|pune| John|   m|         null|
+| 24| hyd|Thanu|   f|         null|
++---+----+-----+----+-------------+
+
+-----------------------------------------------------------------------------------
+7)Reading all the json files from a directory------>by pasing the directory path
+
+hadoop@ubuntu:~$ hdfs dfs -mkdir /jsonlab
+hadoop@ubuntu:~$ hdfs dfs -put json1 json2 /jsonlab
+
+>>> df2=spark.read.json("hdfs://localhost:9000/jsonlab")
+>>> df2.show()
++---+----+-----+----+-------------+
+|age|city| name| sex|         wife|
++---+----+-----+----+-------------+
+| 25| hyd| Ravi|null|   [24, banu]|
+| 26|pune| Ajay|null|[21, kavitha]|
+| 32|pune| John|null|   [27, sony]|
+| 25|null|Blake|   m|         null|
+| 27|null|Ramya|   f|         null|
+| 22|pune| John|   m|         null|
+| 24| hyd|Thanu|   f|         null|
++---+----+-----+----+-------------+
+
+----------------------------------------------------------------------------------
+8)Reading files with user-specifies custom schema
+
+Pyspark sql provides StructType and StructField classes to specify the structure to
+the dataframe
+
+
+>>> from pyspark.sql.types import *
+>>> schema=StructType([StructField("name",StringType(),True),
+...                    StructField("age",IntegerType(),True),
+...                    StructField("sex",StringType(),True),
+...                    StructField("city",StringType(),True)])
+>>> df=spark.read.schema(schema).json("hdfs://localhost:9000/pyspark630pm/json1")
+>>> df.printSchema()
+root
+ |-- name: string (nullable = true)
+ |-- age: integer (nullable = true)
+ |-- sex: string (nullable = true)
+ |-- city: string (nullable = true)
+
+>>> df.show()
++-----+---+---+----+
+| name|age|sex|city|
++-----+---+---+----+
+|Blake| 25|  m|null|
+|Ramya| 27|  f|null|
+| John| 22|  m|pune|
+|Thanu| 24|  f| hyd|
++-----+---+---+----+
+
+-----------------------------------------------------------------------------------
+9)Writing a DataFrame to a JSON File
+
+>>> df.write.json("hdfs://localhost:9000/pyspark630pm/samp1")
+
+hadoop@ubuntu:~$ hdfs dfs -ls /pyspark630pm/samp1
+Found 2 items
+-rw-r--r--   1 hadoop supergroup          0 2024-02-18 06:06 /pyspark630pm/samp1/_SUCCESS
+-rw-r--r--   1 hadoop supergroup        170 2024-02-18 06:06 /pyspark630pm/samp1/part-00000-c0d46f65-09a0-474e-9282-7134577de45d-c000.json
+
+hadoop@ubuntu:~$ hdfs dfs -cat /pyspark630pm/samp1/part-00000-c0d46f65-09a0-474e-9282-7134577de45d-c000.json
+{"name":"Blake","age":25,"sex":"m"}
+{"name":"Ramya","age":27,"sex":"f"}
+{"name":"John","age":22,"sex":"m","city":"pune"}
+{"name":"Thanu","age":24,"sex":"f","city":"hyd"}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

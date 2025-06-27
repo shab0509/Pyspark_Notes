@@ -1,0 +1,94 @@
+
+
+Replacing column values within a DataFrame
+
+1)regexp_replace()
+
+operations:
+i)for replacing a portion of  a string with another string
+ii)replacing values conditionally
+iii)replacing values from a python dictionary
+iv)replace column value from another DataFrame
+
+1)Replacing string column values
+
+>>> address=[(1,"24 beach Rd","chennai"),
+...          (2,"308 Gandhi st","BAN"),
+...          (3,"Temple Rd","HYD")]
+>>> df=spark.createDataFrame(address,["id","addr","city"])
+>>> df.show()
++---+-------------+-------+
+| id|         addr|   city|
++---+-------------+-------+
+|  1|  24 beach Rd|chennai|
+|  2|308 Gandhi st|    BAN|
+|  3|    Temple Rd|    HYD|
++---+-------------+-------+
+
+>>> #Task: Replace Rd with Road using regexp_replace()
+... 
+>>> df2=df.withColumn("addr",regexp_replace("addr","Rd","Road"))
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'regexp_replace' is not defined
+>>> from pyspark.sql.functions import regexp_replace
+>>> df2=df.withColumn("addr",regexp_replace("addr","Rd","Road"))
+>>> df2.show()
++---+-------------+-------+
+| id|         addr|   city|
++---+-------------+-------+
+|  1|24 beach Road|chennai|
+|  2|308 Gandhi st|    BAN|
+|  3|  Temple Road|    HYD|
++---+-------------+-------+
+
+-----------------------------------------------------------------------------------
+2)Replacing column values Conditionally using pyspark  sql functions like
+1)when()
+2)otherwise()
+
+
+>>> from pyspark.sql.functions import when
+>>> df.withColumn("addr",when(df.addr.endswith('Rd'),regexp_replace(df.addr,'Rd','Road')) \
+... .when(df.addr.endswith('st'),regexp_replace(df.addr,'st','street')) \
+... .otherwise(df.addr)).show()
++---+-----------------+-------+
+| id|             addr|   city|
++---+-----------------+-------+
+|  1|    24 beach Road|chennai|
+|  2|308 Gandhi street|    BAN|
+|  3|      Temple Road|    HYD|
++---+-----------------+-------+
+
+----------------------------------------------------------------------------------
+3)Replace Column value with Dictionary(Map)
+
+>>> citydict={'chennai':'chennai','BAN':'Banglore','HYD':'Hyderabad'}
+>>> df3=df.rdd.map(lambda x:(x.id,x.addr,citydict[x.city])).toDF(["id","addr","city"])
+>>> df3.show()
++---+-------------+---------+
+| id|         addr|     city|
++---+-------------+---------+
+|  1|  24 beach Rd|  chennai|
+|  2|308 Gandhi st| Banglore|
+|  3|    Temple Rd|Hyderabad|
++---+-------------+---------+
+
+-----------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+

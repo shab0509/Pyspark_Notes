@@ -1,0 +1,324 @@
+Classification and Regression:
+------------------------------
+These are 2 forms of supervised learning
+both of these use LabeledPoint class 
+A LabeledPoint consists of a label and features vector
+label is a double value here 
+
+
+Accuracy measurement:The closeness between Actual(y) and predicted(y^)values is given as
+                       =abs(100-    (abs(y-y^)*100)/y)
+
+EX;1
+// samp1.txt
+temp sales
+25,30
+27,32
+29,34
+31,36
+33,38
+35,40
+37,42
+39,44
+
+from numpy import array
+from pyspark.mllib.linalg import Vector
+from pyspark.mllib.regression import LabeledPoint
+from pyspark.mllib.regression import LinearRegressionWithSGD
+
+step 1: Loading Data
+
+data=sc.textFile("hdfs://localhost:9000/sparklab/samp1")
+
+step 2: splitting with comma as delimiter
+
+split1=data.map(lambda x:x.split(","))
+
+>>> s2=split1.map(lambda x:(float(x[0]),float(x[1])))
+
+step 3:Now transforming the list into LabeledPoint, 
+     
+Now converting each element as LabeledPoint
+LabeledPoint consists of 2 parameters
+1.label(o/p variable)   (float type)
+2.features(i/p variables) (which is a dense vector), create using numpy array, i.e array([1.0,2.0,3.0])
+
+>> lp=s2.map(lambda x:LabeledPoint(x[1],array([x[0]])))
+>>> lp.collect()
+[LabeledPoint(30.0, [25.0]), LabeledPoint(32.0, [27.0]), LabeledPoint(34.0, [29.0]), LabeledPoint(36.0, [31.0]), LabeledPoint(38.0, [33.0]), LabeledPoint(40.0, [35.0]), LabeledPoint(42.0, [37.0]), LabeledPoint(44.0, [39.0]), LabeledPoint(46.0, [41.0])]
+
+
+step 4: Build the model
+numIterations = 100
+model = LinearRegressionWithSGD.train(lp, numIterations,0.0001)
+//it has 3 parameters  1) LabelledPoint
+                       2) num of iterations
+                       3) Modification error or intercept value
+2nd and 3rd parameters are optional
+
+
+step 5:
+
+ Evaluate model on training examples and predicting
+testres= lp.map(lambda x:(x.label,model.predict(x.features)))
+
+x.label------>Actual value(y)
+predict(x.features)------>predicted value(y^)
+
+>>> testres.collect()
+[(30.0, 25.209248204428608), (32.0, 27.225988060782896), (34.0, 29.242727917137184), (36.0, 31.259467773491473), (38.0, 33.276207629845764), (40.0, 35.292947486200049), (42.0, 37.309687342554341), (44.0, 39.326427198908625), (46.0, 41.343167055262917)]
+
+
+step 6:Accuracy measurement
+
+>>> accuracy=testres.map(lambda x:(abs(100-abs(x[0]-x[1])*100/x[0])))
+>>> accuracy.collect()
+[84.030827348095357, 85.081212689946554, 86.008023285697604, 86.831854926365196, 87.568967446962546, 88.232368715500115, 88.832588910843668, 89.378243633883244, 89.876450120136781]
+
+step 7:fix bench mark for success/failure of a test
+       ex: 86% benchmark for pass else fail
+
+
+>>> def statistics(x):
+...    if(x>=87):
+...       return "PASS" 
+...    else:
+...       return "FAIL"
+... 
+>>> teststatistics=accuracy.map(lambda x:statistics(x))
+>>> teststatistics.collect()
+['FAIL', 'FAIL', 'FAIL', 'FAIL', 'PASS', 'PASS', 'PASS', 'PASS', 'PASS']
+
+
+step 8: To know how many  passed and how many  failed
+
+>>> teststatistics.countByValue()
+defaultdict(<type 'int'>, {'FAIL': 4, 'PASS': 5})
+
+
+ Example 2:
+
+//eamcet.txt
+rank,maths phy chem
+
+17,85 35 38
+35,67 28 39
+12,87 39 41
+18,78 42 26
+23,56 45 23
+35,75 25 27
+
+here rank is label and maths,phy,chem are features
+
+hadoop@ubuntu:~$ hdfs dfs -cat /pyspark630pm/eamcet.txt
+17,85 35 38
+35,67 28 39
+12,87 39 41
+18,78 42 26
+23,56 45 23
+35,75 25 27
+
+
+from numpy import array
+from pyspark.mllib.linalg import Vector
+from pyspark.mllib.regression import LabeledPoint
+from pyspark.mllib.regression import LinearRegressionWithSGD
+
+step 1:
+data=sc.textFile("hdfs://localhost:9000/sparklab/eamcet")
+
+step 2:
+split1=data.map(lambda x:x.split(","))
+>>> split1.collect()
+[[u'17', u'85 35 38'], [u'35', u'67 28 39'], [u'12', u'87 39 41'], [u'18', u'78 42 26'], [u'23', u'56 45 23'], [u'35', u'75 25 27']]
+
+>>> s2=split1.map(lambda x:(x[0],x[1].split(' ')))
+>>> s2.collect()
+[(u'17', [u'85', u'35', u'38']), (u'35', [u'67', u'28', u'39']), (u'12', [u'87', u'39', u'41']), (u'18', [u'78', u'42', u'26']), (u'23', [u'56', u'45', u'23']), (u'35', [u'75', u'25', u'27'])]
+
+>>> s3=s2.map(lambda x:(float(x[0]),[float(x[1][0]),float(x[1][1]),float(x[1][2])]))
+>>> s3.collect()
+[(17.0, [85.0, 35.0, 38.0]), (35.0, [67.0, 28.0, 39.0]), (12.0, [87.0, 39.0, 41.0]), (18.0, [78.0, 42.0, 26.0]), (23.0, [56.0, 45.0, 23.0]), (35.0, [75.0, 25.0, 27.0])]
+
+
+step 3: Transforming into LabeledPoint 
+>>> lp=s3.map(lambda x:LabeledPoint(x[0],array(x[1])))
+>>> lp.collect()
+[LabeledPoint(17.0, [85.0,35.0,38.0]), LabeledPoint(35.0, [67.0,28.0,39.0]), LabeledPoint(12.0, [87.0,39.0,41.0]), LabeledPoint(18.0, [78.0,42.0,26.0]), LabeledPoint(23.0, [56.0,45.0,23.0]), LabeledPoint(35.0, [75.0,25.0,27.0])]
+
+
+step 4:Building the model
+
+numIterations = 100
+model = LinearRegressionWithSGD.train(lp, numIterations,0.0001)
+
+step 5:
+
+ Evaluate model on training examples and predicting
+
+testres= lp.map(lambda x:(x.label,model.predict(x.features)))
+
+>>> testres.collect()
+[(17.0, 24.78825607457394), (35.0, 20.432793473648783), (12.0, 25.869348720066117), (18.0, 22.838075269976464), (23.0, 18.202670599206492), (35.0, 20.701526459465338)]
+
+
+step 6:Accuracy measurement
+
+accuracy=testres.map(lambda x:(abs(100-abs(x[0]-x[1])*100/x[0])))
+
+>>> accuracy.collect()
+[54.186728973094468, 58.379409924710806, 15.577906000550982, 73.121804055686312, 79.142046083506486, 59.147218455615253]
+
+
+step 7:fix bench mark for success/failure of a test
+       ex: 70% benchmark for pass else fail
+>>> def statistics(x):
+...    if(x>=70):
+...      return "PASS"
+...    else:
+...      return "FAIL"
+... 
+>>> teststatistics=accuracy.map(lambda x:statistics(x))
+>>> teststatistics.collect()
+['FAIL', 'FAIL', 'FAIL', 'PASS', 'PASS', 'FAIL']
+
+
+
+step 8: To know how many tests passed and how many tests failed
+
+teststatistics.countByValue()
+
+>>> teststatistics.countByValue()
+defaultdict(<type 'int'>, {'FAIL': 4, 'PASS': 2})
+
+
+
+
+
+example 3:
+
+//eamcet2.txt
+
+name,maths,rank,phy,chem
+ajay,85,17,35,38
+vijay,67,35,28,39
+sanjay,87,12,39,41
+pranay,78,18,42,26
+vinay,56,23,45,23
+akshay,75,35,25,27
+
+// in the above data----->3rd field is label
+                         >2nd,4th,5th fields are features
+hadoop@ubuntu:~$ hdfs dfs -put eamcet2.txt /pyspark630pm
+hadoop@ubuntu:~$ hdfs dfs -cat /pyspark630pm/eamcet2.txt
+ajay,85,17,35,38
+vijay,67,35,28,39
+sanjay,87,12,39,41
+pranay,78,18,42,26
+vinay,56,23,45,23
+akshay,75,35,25,27
+
+from numpy import array
+from pyspark.mllib.linalg import Vector
+from pyspark.mllib.regression import LabeledPoint
+from pyspark.mllib.regression import LinearRegressionWithSGD
+
+step 1: Loading Data
+
+data=sc.textFile("hdfs://localhost:9000/sparklab/eamcet2.txt")
+
+step 2:splitting
+
+>>> split1=data.map(lambda x:x.split(","))
+>>> split1.collect()
+[[u'ajay', u'85', u'17', u'35', u'38'], [u'vijay', u'67', u'35', u'28', u'39'], [u'sanjay', u'87', u'12', u'39', u'41'], [u'pranay', u'78', u'18', u'42', u'26'], [u'vinay', u'56', u'23', u'45', u'23'], [u'akshay', u'75', u'35', u'25', u'27']]
+>>> s2=split1.map(lambda x:(x[0],float(x[2]),[float(x[1]),float(x[3]),float(x[4])]))
+>>> s2.collect()
+[(u'ajay', 17.0, [85.0, 35.0, 38.0]), (u'vijay', 35.0, [67.0, 28.0, 39.0]), (u'sanjay', 12.0, [87.0, 39.0, 41.0]), (u'pranay', 18.0, [78.0, 42.0, 26.0]), (u'vinay', 23.0, [56.0, 45.0, 23.0]), (u'akshay', 35.0, [75.0, 25.0, 27.0])]
+
+
+step 3: Transforming into LabledPoint
+
+>>> lp=s2.map(lambda x:LabeledPoint(x[1],array(x[2])))
+>>> lp.collect()
+[LabeledPoint(17.0, [85.0,35.0,38.0]), LabeledPoint(35.0, [67.0,28.0,39.0]), LabeledPoint(12.0, [87.0,39.0,41.0]), LabeledPoint(18.0, [78.0,42.0,26.0]), LabeledPoint(23.0, [56.0,45.0,23.0]), LabeledPoint(35.0, [75.0,25.0,27.0])]
+
+
+
+step 4:Build the model
+
+numIterations = 100
+model = LinearRegressionWithSGD.train(lp, numIterations,0.0001)
+
+step 5:
+
+ Evaluate model on training examples and predicting
+testres= lp.map(lambda x:(x.label,model.predict(x.features)))
+
+>>> testres.collect()
+[(17.0, 24.78825607457394), (35.0, 20.432793473648783), (12.0, 25.869348720066117), (18.0, 22.838075269976464), (23.0, 18.202670599206492), (35.0, 20.701526459465338)]
+
+
+step 5:Accuracy measurement
+
+>>> accuracy=testres.map(lambda x:(abs(100-abs(x[0]-x[1])*100/x[0])))
+>>> accuracy.collect()
+[54.186728973094468, 58.379409924710806, 15.577906000550982, 73.121804055686312, 79.142046083506486, 59.147218455615253]
+
+
+step 6:fix bench mark for success/failure of a test
+       ex: 55% benchmark for pass else fail
+
+>>> def statistics(x):
+...    if(x>=55):
+...      return "PASS"
+...    else:
+...      return "FAIL"
+... 
+>>> teststatistics=accuracy.map(lambda x:statistics(x))
+>>> teststatistics.collect()
+['FAIL', 'PASS', 'FAIL', 'PASS', 'PASS', 'PASS']
+
+
+
+step 7: To know how many tests passed and how many tests failed
+
+
+>>> teststatistics.countByValue()
+defaultdict(<type 'int'>, {'FAIL': 2, 'PASS': 4})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

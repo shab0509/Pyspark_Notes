@@ -1,0 +1,59 @@
+translate() : replacing character by character of a DataFrame column
+
+Task:
+
+replace 2 with A
+        3 with B
+        4 with C in the addr colum
+
+>>> df.show()
++---+-------------+-------+
+| id|         addr|   city|
++---+-------------+-------+
+|  1|  24 beach Rd|chennai|
+|  2|308 Gandhi st|    BAN|
+|  3|406 Temple Rd|    HYD|
++---+-------------+-------+
+
+>>> from pyspark.sql.functions import translate
+>>> df.withColumn('addr',translate('addr','234','ABC')).show()
++---+-------------+-------+
+| id|         addr|   city|
++---+-------------+-------+
+|  1|  AC beach Rd|chennai|
+|  2|B08 Gandhi st|    BAN|
+|  3|C06 Temple Rd|    HYD|
++---+-------------+-------+
+
+--------------------------------------------------------------------------------------------
+2) replacing a column with another column value from another DataFrame column
+
+we can do this using
+ -expr()
+ -regexp_replace()
+
+
+>>> from pyspark.sql.functions import expr,regexp_replace
+>>> df=spark.createDataFrame([("Amrutha singh","singh","Arun")],("col1","col2","col3"))
+>>> df.show()
++-------------+-----+----+
+|         col1| col2|col3|
++-------------+-----+----+
+|Amrutha singh|singh|Arun|
++-------------+-----+----+
+
+here we match the value from col2 in col1 and replace witj col3 to create a new column
+
+>>> df.withColumn("New_column",expr("regexp_replace(col1,col2,col3)")).show()
++-------------+-----+----+------------+
+|         col1| col2|col3|  New_column|
++-------------+-----+----+------------+
+|Amrutha singh|singh|Arun|Amrutha Arun|
++-------------+-----+----+------------+
+
+------------------------------------------------------------------------------------------------
+
+
+
+
+

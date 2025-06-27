@@ -1,0 +1,98 @@
+
+
+Pyspark installation on windows
+
+step 1: Install Python (3.7 or later)
+
+        Check the python version in cmdprompt
+        C:\>python --version
+        Python 3.8.8
+ 
+Step 2: Install Java (Version8)
+
+        Check the Java Version in cmdprompt
+        C:\>java -version
+        java version "1.8.0_144"
+       
+
+        Setting path for JAva--->Environment Variables---->User Variables--->click path
+        ---->Edit---->New---->(paste the java path here i.e) C:\programFiles\Java\jdk1.8.0\bin
+ 
+
+Step 3: Download Spark (3 version)
+     
+        Google---->spark download---->spark3.1
+                                      HAdoop3.2
+                                      download---->either HTTP or Backupsites
+Step 4: Extract the tar file:
+
+        create a spark folder in c-drive and
+        Extract---Spark.tgz--->we get spark.tar--->extract it ---we get spark folder
+ 
+        copy this entire path----->C:\spark\spark3.1\bin 
+                   
+
+
+step 5: setting the Environment Variables for Spark
+ 
+ Goto Environment Variables---->
+i)User Variables --->New ---->type--->SPARK_HOME 
+                              value-->C:\spark\spark-3.1.3-bin-hadoop3.2
+   ii)User Variables--->click path-->Edit-->New----->paste the spark path i.e--->
+                                                      C:\spark\spark-3.1.3-bin-hadoop3.2\bin
+
+
+step 6: Goto Cmdprompt and  start pyspark
+
+
+C:\pyspark ----->it starts
+
+----------------------------------------------------------------------------------------------
+working with pyspark on Anaconda Distribution:
+----------------------------------------------
+
+Google----->Download Anaconda---->select windows ----->download
+
+step 1: Install Anaconda Distribution
+
+step 2: Install Java
+        
+        click Anaconda prompt within the anaconda folder
+
+        >conda install openjdk
+
+        After  JAva installation, to check the Version
+        >java -version
+
+
+step 3: Install pyspark
+        >conda install pyspark
+
+
+step 4: install findspark
+        To find the pyspark install, we will use findspark package
+        as it is a 3rdparty package ,we need to install it before
+ 
+        >conda install -c conda-forge findspark
+
+step 5: Validate pyspak
+        >pyspark  ------->pyspark shell opens...
+
+
+-----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      

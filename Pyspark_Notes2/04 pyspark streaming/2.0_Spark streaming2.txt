@@ -1,0 +1,156 @@
+
+
+
+input datastream: Data which is generated from sensors (or)
+ data coming from retail (or) e-commerce website
+
+streaming data---->data in motion--->ex:sensors
+
+here it breaks the stream into micro-batches
+
+
+sources                                      Target
+
+kafka                                        HDFS
+Flume --------->Spark Streaming ---------->  Databases
+HDFS                                         Nosql
+Twitter                                      Dashboards
+
+
+i/pdatastream---->sparkstreaming---->Batches of i/pdata--->spark---->batches of processed data
+
+Batch Processing Vs Stream Processing
+
+Features          Batch processing                       Stream Processing
+
+Data              Applied on entire data                 applied on most recent data
+
+Data size         Entire data(large)                     individual records or microbatches 
+
+performance       minutes to hours                       seconds or milliseconds
+
+Analytics         complex Analytics                      simple Aggregations
+
+framework         spark                                  spark streaming ,storm
+
+----------------------------------------------------------------------------------------------
+
+ssc=sparkstreamingcontext(sc,10) 
+                                here 10 is microbatch period
+
+ex:  streaming from a file
+ds1=ssc.textFileStream(.....)
+     here i can directly access file data
+
+                      host
+sss.socketTextStream(localhost,99999)
+                               portno
+                i.e from a port i can stream like netcat or telnet
+
+always my sparkstreamingcontext will be listening and capturing from that port
+
+whenever one event is generated at that port --->automatically it will be captured
+by socketTextStream
+
+It will capture ,but immediately it wont pass to sparkcore
+when it will pass to sparkcore----->after 10secs(microbatch period)
+but within this 10secs----->assume 100events are generated from that port--->formed as one batch
+
+
+once 10secs---->completed--->one batch is formed
+till then the sparkstreaming keeps buffering the events(ex:100 events)
+
+this batch(100events) passed to spark core and processed
+
+1st event---->I Like spark
+2nd event     you Like Python
+3rd event     he Like JAva
+
+all these events ate kept in one RDD of a Dsstream
+
+#Task :simple word count
+
+here we need to work with datastream only
+we doesnt have direct access with a particular RDD
+
+First flatten the things
+here 3 recs------>3 strings(3 lines)
+                  first convert to words
+
+ds1=ssc.socketTextStream(localhost,99999)
+ds2=ds1.flatMap(lambda x:x.split(" "))
+        here flatMap--->nested collection into one collection
+
+o/p: [I,Like,spark,you,like,python,he,like,Java]
+
+As spark core is processing
+Spark streaming will be preparing the batches continuously..
+
+Transformation over dsstream---->returns dsstream only
+ds3=ds2.map(lambda x:(x,1))
+
+(I,1),(Like,1),(spark,1).............
+
+ds4=ds3.reduceByKey(lambda x,y:x+y)
+
+ds4.collect()
+
+o/p:
+
+I-1
+Like-3
+.
+.
+.
+This is the o/p of 1st RDD---->1st batch
+similarly for the 2nd batch--->seperate result
+                  3rd batch---->separate result 
+
+Each independent RDD is processed by spark core seperately
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

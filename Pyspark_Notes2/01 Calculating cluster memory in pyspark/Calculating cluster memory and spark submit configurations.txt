@@ -1,0 +1,456 @@
+
+How to Calculate the cluster memory in spark  while executing spark Job.
+------------------------------------------------------------------------
+
+-For parallelism------->we run the code in different machines instead of running 
+                        in a single machine
+
+spark 1.xxx------->sparkcontext
+spark 2.xxx------->spark session
+
+-when we submit a spark job then sparkcontext or sparksession intiates a JVM process
+ to execute the entire job. This JVM process is called a executor
+
+1 Node----->can have 1 or more executors
+again inside the executor ,we have to mention ,how many cores we have
+
+here cores means threads
+
+Executor is a JVM process,we need some threads to execute the tasks, these execution threads
+are called as cores.
+
+-Q)what is the ideal or optimal count of cores for each executor?? ---->4
+
+-How to see the No of cores in a machine---->TaskMAnager---->performance tab-->
+                                       --No of  cores:4
+    here cores means threads
+
+Calculating the cluster memory in spark  while executing spark Job
+
+ex:
+Consider 4 Node cluster
+i.e 4machines
+
+
+      Node1              Node2                 Node3               Node4
+4cores for Executor    4Cores for Executor     4cores for Executor 4 cores for Executor
+64GB Memory            64GB Memory             64GB Memory         64GB Memory
+16 Cores               16cores                 16 cores            16cores
+
+
+Calculation:
+Cluster Nodes     :4
+Each Node Memory  :64G
+Each has cores    :16
+
+why we have to calculate this, why spark cannot do this??
+
+Spark does it with some default (or) dynamic configuration
+
+ex:
+  Submitting 5spark jobs
+
+  Job1--->Tester testing sum of  2no's
+          takes less time --->wont require more memory
+
+  Job2--->Some Database operation
+          -takes more time
+          -require more memory
+
+  Job3 ---> join or Group by operation
+             here we have lot of shuffle operations B/w the executors
+             -requires lot of memory
+             -takes lot of time to relaese the resources.
+
+  Job4
+  Job5  ----->These also takes more time and memory
+
+
+  If we leave this to spark------->it does but with default configurations
+
+
+
+ 
+Calculations:
+Cluster Nodes     :4
+Each Node Memory  :64G
+Each has cores    :16
+Leave one core for other background processes(left out cores are)---->15
+Total cores available in all 4 Nodes ---------------->15x4=60 cores (Total available cores)
+
+No of executors required=totalcores/no of cores per executor ---->60/4=15executors
+
+Leave one executor for Application manger                  ------->15-1=14 executors
+(bcoz--->once we start the execution,we need to sendback
+         the results (or) others)
+
+Executors per Node -------------------------------------->14/4nodes=3.5 ~ 4
+
+Memory per Executor ------------------------------------->(64-1(i.e 1GB for other processes)
+                                                         =63
+                                                         =63/executors per Node
+                                                       =63/4 ~16 =16GB/Executor we have to leave
+
+6 to 10% of Executor memory we need to leave for overhead memory
+
+i.e overhead errors
+
+ex: available--->10GB
+    but the processes required 11GB--->this is memory overhead error
+                                    --->memory overflow exception
+
+so for resolving these,we usually leave memory for overhead
+
+6 to 10% is the typical memory we leave
+ex: 8% ----------->16x(8/100) =1.28 ~ 2GB for overhead memory
+              here 16 is memory per executor
+
+that means  16-2GB =14GB is the executor memory
+
+Previously we said 4 executors/node
+
+                   63/4=16-2 =14GB
+
+Finally,
+
+   Node 1
+   -4 cores per Executor
+   -64 GB Memeory
+   -16 cores
+   -4Executors /Node
+   -14GB/Executor
+   -2GB for overhead
+
+These are the basic calcuations we do, before we submit the spark job
+
+spark.executor.cores=4      (4cores/Executor)
+spark.executor.instances=4  (4 Executors/node)
+spark.executor.memory =14G
+spark.yarn.executor.memoryoverhead=2g
+spark.driver.memory=1g ------->default value
+                         or change to 2g
+
+
+Spark submit paramters are:
+
+spark-submit --master yarn \
+            --driver-memory 1G \
+            --num-executors 4 \
+            --executor-cores 4 \
+            --executor-memory 14G \
+            --python file \
+            --i/p path \
+            --output path \
+
+(or)
+
+conf=sparkConf()
+conf.set("spark.driver.memory","1g")
+.
+.
+.
+---------------------------------------------------------------------------------------------
+
+Configuring Executor memory and Executor cores
+
+I)spark-submit --executor-cores 4 --executor-memory 14g /home/hadoop/wordcount.py
+  hdfs://localhost:9000/pysparklab/comment  hdfs://localhost:9000/pysparklab/wordcountres
+
+
+II)Submitting to the fair  scheduler
+   spark-submit --executor-cores 4 --executor-memory 14g \
+   --conf "spark.scheduler.mode"="FAIR" /home/hadoop/wordcount.py
+  hdfs://localhost:9000/pysparklab/comment  hdfs://localhost:9000/pysparklab/wordcountres
+
+III) driver memory and driver cores'
+     spark-submit --executor-cores 4 --executor-memory 14g \
+     --conf "spark.scheduler.mode"="FAIR" \
+     --driver-cores 2 --driver-memory 2G /home/hadoop/wordcount.py
+  hdfs://localhost:9000/pysparklab/comment  hdfs://localhost:9000/pysparklab/wordcountres
+
+----------------------------------------------------------------------------------------------- 
+
+--deploy-mode :
+              whether to launch the driver program locally("client")
+               or
+              one of the worker machines inside the cluster ("cluster")
+
+Executors always be launched in the worker nodr 
+
+Job is to process the dats 
+Data will be in worker nodes only..
+
+Driver Can be launched in worker/ outside the worker
+
+If the driver has to be launched in a worker node then deploy the application
+in cluster mode only
+
+
+If the driver has to be launched out of  worker node then deploy the application in client mode
+
+when we submit the spark Application from the master Node. The master node becomes the client.
+
+
+The node from which we submit the spark Application to the cluster. If the driver is 
+launched in that node then it is called as client deploy mode
+
+Edge node (or) Gateway Node: Gateway between the networks
+
+Instead of giving access to the entire cluster,directly an intermediate node will be used 
+that will act as an interface b/w Cluster and the outside world .This node is called edge node
+
+
+we can access the cluster through  that edge node only ,we cant access cluster directly
+
+
+
+
+whatever we do ,we  should do through this edge node 
+
+If you want to see what is hapenning to the application within the cluster
+
+who will maintain the entire information of the Application---->Driver
+
+If we want to run the driver on the edge node---->deploy in client mode
+
+If we want to run the driver on one of the worker node then deploy in cluster mode
+
+If you wont specify any mode--->By default it is client mode
+
+Client mode----->for development and Testing
+Cluster mode---> For production
+
+Submitting Spark Application to YARN
+
+YARN ---->MAster process is ------>Resource MAnager
+          Slave Process is ------->Node MAnager
+
+
+Submitting Spark Application to YARN means---->
+we are submitting Spark App to Resource MAnager
+
+HDFS ----->MAster Process----->NameNode
+           Slave Process ----->DataNode
+
+To communicate with HDFS we need to interact with Master Process--->NameNode
+
+we doesnt have direct interaction with slave processes which performs Processing
+
+Ex: In a Company, got a new project , then there wont be direct interaction 
+    with the developers where they execute and develop the code
+    Instead Project MAnager ,teamleader etc will be interacted.
+
+First data goes to Project MAnager and then data gets distributed to developers
+
+we read/write data to NameNode and NameNode will verify all the slave nodes/worker nodes
+
+for storing data i.e which are alive and which are dead.
+
+---------------------------------------------------------------------------------------------
+
+Spark-submit Configurationoptions  programfilepath i/ppath o/ppath
+             <----optional------>
+
+
+we can provide the configuration options either from the 
+1)spark-submit script
+or
+2)from the program itself
+
+----------------------------------------------------------------------------------------------
+nano demo1.py
+
+Program:
+
+from pyspark.sql import SparkSession
+import sys
+
+if(__name__=__main__):
+   sparkdriver=SparkSession.builder.getOrCreate()
+   df=sparkdriver.read.format('csv').load(sys.argv[1])
+   df.write.saveAsTable(sys.argv[2])
+   sparkdriver.stop()
+
+#Herewe didnt pass the application name and master i.e Configuration options
+#In the previous example we passed those in the program itself
+#Submitting :
+
+spark-submit --master local --executor-memory 2G --executor-cores 2 --deploy-mode client
+             /home/hadoop/demo1.py   hdfs://localhost:9000/pysparklab1/emp1.csv  table1
+             <---program path---->   <------input file path--------------------> 
+
+
+#here table1 is the tablename that  is going to created 
+#IF spark integrated with hive then it is stored in hive
+
+>>> spark.sql('show tables').show()
++--------+-----------+-----------+
+|database|  tableName|isTemporary|
++--------+-----------+-----------+
+| default| dupessamp1|      false|
+| default| dupessamp2|      false|
+| default| dupessamp3|      false|
+| default|  dupestab1|      false|
+| default|  dupestab2|      false|
+| default|        emp|      false|
+| default|      htab2|      false|
+----------------------------------
+
+>>> spark.sql("select * from default.emp").show()
+[Stage 21:>                                                         (0 + 1) /                                                                               +---+------+-----+---+---+
+|eid| ename|  sal|sex|dno|
++---+------+-----+---+---+
+|101|Miller|10000|  m| 11|
+|102| Blake|20000|  m| 12|
+|103|  Sony|30000|  f| 11|
+|104|  Sita|40000|  f| 12|
+|105| James|50000|  m| 13|
++---+------+-----+---+---+
+
+#-------------------------------------------------------------------------------------------
+
+The configuration options provided in spark-submit can also be provided from the program level
+
+Program:
+
+from pyspark.sql import SparkSession
+import sys
+
+if(__name__='__main__'):
+
+     sparkdriver=SparkSession.builder.master('local').appname("DemoApp").
+                 config('spark.executor.cores','2').
+                 config('spark.executor.memory','2G').
+                 config('spark.submit.deploy.mode','client')
+                 
+                 1st line also can be given in config()
+                 .config('spark.master','local')
+                 .config('spark.app.name'.'DemoApp')
+                  rdd1=sc.textFile(sys.argv[1])
+                  rdd2=rdd1.map(lambda x:x.split(" ").
+                       map(lambda x:(x,1)).
+                       reduceByKey(lambda x,y:x+y)
+                  rdd2.saveAsTextFile(sys.argv[2])
+                  sc.stop()
+
+Submitting: Here no need to specify the configuration options
+
+spark-submit /home/hadoop/wordcount.py  hdfs://localhost:9000/pysparklab/comment
+             <----program filepath--->  <----------HDFS i/p File Path---------->  
+             hdfs://localhost:9000/pysparklab/wordcountres
+             <-----HDFS o/p file path------------------->
+
+
+Now i will pass master as YARN while submitting
+
+spark-submit --master yarn programpath  i/ppath o/ppath
+
+but in programmaster was given as local
+
+so always preference will be given to Program specified one.
+
+IF we submit the above one---->IT runs in local mode only
+
+Goto progrm and change 'local' to 'yarn' and
+while submittine give --->sapark-submit --master local
+
+here the app is submitted to RM
+
+----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                         
+
+
+
+
+
+                                                                               
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

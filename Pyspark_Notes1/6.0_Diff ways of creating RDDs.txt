@@ -1,0 +1,11 @@
+
+Different ways of creating RDDs: 3 ways
+
+1.whenever we load a file from hdfs using sparkcontext(sc) then a RDD is created
+>>> r1=sc.textFile("hdfs://localhost:9000/pyspark630pm/emp1.txt")
+
+2.whenever we perform Transformations on a RDD....then the resultant is also a RDD
+   r2=r1.filter(....)
+
+3.IF we parallelize a python object---->then RDD is created
+  r1=sc.parallelize(x)
