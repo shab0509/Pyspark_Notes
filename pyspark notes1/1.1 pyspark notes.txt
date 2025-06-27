@@ -1,0 +1,201 @@
+#Lecture 1 
+------------------
+Pyspark:
+------------------
+
+1.what is Apache Spark
+2.Why Pyspark
+3.Need for Pyspark
+4.Spark Python Vs Scala
+5.Pyspark features
+6.Real-life usage of Pyspark
+
+
+
+------------------
+what is Apache Spark
+------------------
+
+-Spark was developed by Matei Zaharia in AMP lab, Berkeley in the year 2009
+-Spark was made opensourced in the year 2010
+-Spark was donated to Apache Software Foundation in the year 2013
+
+Apache Spark is an open-source unified analytics engine used for large-scale data processing,
+hereafter referred it as Spark. Spark is designed to be fast, flexible, and easy to use,
+making it a popular choice for processing large-scale data sets.
+Spark runs operations on billions and trillions of data on
+distributed clusters 100 times faster than traditional applications.
+
+Spark can run on single-node machines or multi-node machines(Cluster).
+It was created to address the limitations of MapReduce, by doing in-memory processing.
+Spark reuses data by using an in-memory cache to speed up machine learning algorithms
+that repeatedly call a function on the same dataset.
+This lowers the latency making Spark multiple times faster than MapReduce,
+especially when doing machine learning, and interactive analytics.
+Apache Spark can also process real-time streaming.
+
+It is a -open source
+        -distributed cluster-computing framework
+        -with in-memory computing
+        -in parallel process style
+        -used for large scale data processing
+
+spark---->scala
+pyspark-->python
+
+------------------
+Features of Apache Spark
+------------------
+1. Python API: Provides a Python API for interacting with Spark,
+               enabling Python developers to leverage Spark’s distributed computing capabilities.
+2. Distributed Computing: PySpark utilizes Spark’s distributed computing framework to process
+                          large-scale data across a cluster of machines, enabling parallel execution of tasks.
+3. Fault Tolerance: Automatically handles fault tolerance by maintaining resilient distributed datasets (RDDs),
+                    which allows it to recover from failures gracefully.
+4. Lazy Evaluation: PySpark employs lazy evaluation, meaning transformations on data are not executed immediately but
+                    rather stored as a directed acyclic graph (DAG) of computations until an action is triggered.
+5. Integration with Python Ecosystem: Seamlessly integrates with the Python ecosystem, allowing users to leverage
+                                      popular Python libraries such as pandas, NumPy, and scikit-learn for data manipulation and machine learning tasks.
+6. Interactive Data Analysis: PySpark is well-suited for interactive data analysis and exploration,
+                              thanks to its integration with Jupyter Notebooks and interactive Python shells.
+7. Machine Learning: PySpark includes MLlib, Spark’s scalable machine learning library, which provides a wide range
+                     of machine learning algorithms for classification, regression, clustering, and more.
+8. Streaming Processing: Supports streaming processing through Spark Streaming, enabling real-time data processing and
+                         analysis on continuous data streams.
+9. SQL Support: Allows users to perform SQL queries on distributed datasets using Spark SQL,
+                providing a familiar interface for working with structured data.
+10. Multi-Language support ----> Python,Scala,Java,R
+11. Good For Iterative Algorithms
+
+------------------
+Cluster Managers
+------------------
+Cluster managers in PySpark are responsible for resource allocation and task scheduling across nodes in a distributed computing environment.
+Here’s a brief overview of the different types:
+
+1. Standalone: The standalone cluster manager is a simple, standalone solution bundled with Spark that manages resources for applications.
+               It’s suitable for small to medium-sized clusters and doesn’t require additional software installation.
+2. Mesos: Mesos is a distributed systems kernel that abstracts CPU, memory, storage, and other compute resources across a cluster.
+          PySpark can leverage Mesos as a cluster manager, allowing efficient resource sharing among multiple frameworks like Spark, Hadoop, and others.
+3. Hadoop YARN (Yet Another Resource Negotiator): YARN is Hadoop’s resource management layer, responsible for managing and scheduling resources
+                across a Hadoop cluster. PySpark can run on YARN, enabling seamless integration with existing Hadoop ecosystems and leveraging
+                YARN’s resource management capabilities.
+4. Kubernetes: Kubernetes is a container orchestration platform that automates deployment, scaling, and management of containerized applications.
+               PySpark can run on Kubernetes, enabling dynamic resource allocation and efficient utilization of resources in containerized environments.
+
+local – “local” is a special value used for the master parameter when initializing a SparkContext or SparkSession.
+When you specify local as the master, it means that Spark will run in local mode,
+utilizing only a single JVM (Java Virtual Machine) on the local machine where your Python script is executed.
+This mode is primarily used for development, testing, and debugging purposes
+
+Each cluster manager type offers unique features and benefits, catering to different deployment scenarios and infrastructure requirements.
+The choice of cluster manager depends on factors such as scalability, resource isolation, integration with existing infrastructure, and ease of management.
+
+------------------
+Python VS Scala
+------------------
+       Python                        Scala
+
+1.Python is interpreted       1. Scala is statically typed
+  and Dynamic typed
+  x=[10,20,30]
+  x=4.5
+  x=10
+
+2.Python has a huge community 2.Scala community is smaller
+3.Python is slower than scala 3.Scala is 10 times faster than python
+4.Python contains powerfull   4.Scala has no such
+  libraries for ML,Graph algorithms
+
+Flink
+before spark 1.6 < flink
+spark 1.6onwards ~ flink
+spark 2          > flink
+
+------------------
+Real life usage of Pyspark:
+------------------
+1. Commercial sector
+2. Health care
+3. Entertainment Industry
+4. Trading and E-commerce
+5. Tourism Industry
+
+-----------------------------------------------------------------------------------------------
+Spark can be coded with
+         -Scala (default)
+         -Python
+         -Java
+         -R
+
+-----------------------------------------------------------------------------------------------
+Execution Generations
+
+1)MapReduce
+2)Tej
+3)Spark
+
+Tej Vs Spark ------> Both follows DAG model(Directed-Acyclic Graph)
+                     Tej doesnt support in-memory computation
+                     but spark is in-memory computing system,so spark is faster than Tej
+-----------------------------------------------------------------------------------------------
+Other in-memory Computing Systems in the market ---------->SAP HANA
+
+HANA Vs Spark --------> Both follows in-memory computation
+                        But HANA is not distributed
+                        But Spark is distributed RAM
+
+-----------------------------------------------------------------------------------------------
+
+for Huge Storage------------->Hadoop
+for fast processing---------->pyspark
+                            combinely both can store and process huge data
+
+
+-----------------------------------------------------------------------------------------------
+Pyspark is mainly designed for
+                  i)Batch Applications --->user non-interactive Applications
+                 ii)Iterative Algorithms
+                iii)Interactive queries
+                 iv)Streaming
+
+-----------------------------------------------------------------------------------------------
+MapReduce VS Spark
+
+MapReduce Drawbacks:
+1.Transformations cannot be re-used
+2.Bad for Iterative Algorithms
+3.Not a flexible parallel process
+4.Slow Processing
+
+-----------------------------------------------------------------------------------------------
+Spark Vs PiG
+-Both are Dataflow Languages
+-But in PIG, the entire Dataflow is converted into 1 MR job, but again MR is bad
+------------------------------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------------------------
+Yahoo---->Table---->100TB------->1024 columns
+Task---->sorting---->16cols
+
+Timetaken
+
+1)Orcale----->3.5days
+2)mysql------>6days
+3)Teradata--->4.5hrs
+4)Netezza --->3hrs
+5)hadoop----->3.2mins
+              1.2mins
+              
+Spark----->100 times faster than hadoop(mapReduce)
+
+------------------
+Motivation towards Spark
+------------------
+spark sorted 100TB data using 206 nodes in 23 minutes
+previous world record was 72 minutes set by Hadoop MR cluster using 2100nodes
+
+in memory------>100 times faster than MR
+in Disk ------->10 times faster than MR
+

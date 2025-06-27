@@ -1,0 +1,278 @@
+RDD(Resilient Distributed Datasets)
+-----------------------------------------------------------------------------------------------
+-PySpark data objects are called as RDDs
+-RDDs are subdivided into partitions
+-These partitions are distributed across multiple RAMs of multiple worker nodes(CPUs)
+-Here the advantage--->huge datasets(RDD) also can be loaded
+-RDD programming style--------->"Dataflow"
+-Dataflow is a sequence collection of pipes(RDDs)
+-A Pipe(RDD) is any data operation,the operation can be
+                    -loading data
+                    -transforming data
+                    -merging data
+                    -filtering data
+                    -sorting data etc
+
+In Spark,Dataflow is executed in sequence i.e RDD by RDD(one after the another)
+with in-memory computation and persistence feature
+
+If  a  RDD has got 30 partitions , then all these 30 partitions can be executed in parallel
+-----------------------------------------------------------------------------------------------
+
+On a RDD , 2 types of operations can be performed
+i)Transformations
+ii)Actions
+
+Transformation on a RDD------>result is also a RDD(spark object)
+here the Transformation can be--->filtering,transforming,merging,grouping,sorting
+
+Action on a RDD-------------->results  a Local object(python object)
+
+1)Transformations :3 types
+  i)Each element Transformation
+     ex: map() ,flatMap()
+     ex: Transforming each element(name) to start with uppercase character.
+
+ ii)Filter Transformation :Filtering based on a condition
+      ex: filter(),filterByRange()
+
+iii)Aggregated Transformation :
+     ex: groupby city
+         groupby dno
+     ex:groupBykey() ,reduceByKey()
+-----------------------------------------------------------------------------------------------
+Actions: when an action is performed on a RDD, then only the dataflow will be executed
+         from the root RDD.
+The following are some of the actions:
+
+1.collect():It will collect all the partitions data from different slave machines into client machine
+            ex:rdd4.collect()
+
+2.count() :counts the number of elements in a RDD
+           ex:RDD.count()
+
+3.take(n) :takes first 'n' number of elements in a RDD
+           similar to limit in sql
+           ex:  RDD.take(10)
+                means takes the 1st 10 records
+                if the paritition1 is having only 5 recs then it takes
+                                                                    5recs from partition1
+                                                                    5recs from partition2
+4.saveAsTextFile(): storing the results into hdfs file
+
+----------------------------------------------------------------------------------------------
+
+ rdd1=sc.textFile("hdfsfilepath")
+ rdd2=rdd1.map(....)
+ rdd3=rdd2.filter(....)
+ rdd4=rdd3.flatMap(...)
+ rdd5=rdd4.groupByKey(...)
+ res=rdd5.collect()  here res is a python object
+
+
+currently how many RDDs are in RAM--->0
+when action is performed only-->one by one RDD will be loaded and computed and the previous RDD
+                            gets removed, once the execution is completed then the last RDD also
+                            gets removed
+
+----------------------------------------------------------------------------------------------
+2 situations where RDD will be removed from the RAM
+
+1)whenever next RDD is ready,previous RDD will be removed
+2)when action or execution is completed then last RDD gets removed
+----------------------------------------------------------------------------------------------
+2 ways to persist an RDD
+
+1. RDD.persist()
+2. RDD.cache()
+
+----------------------------------------------------------------------------------------------
+3 ways to unpersist an RDD
+
+1)Forcefully unpersisting by saying  RDD.unpersist()
+2)when session is closed
+3)when server shut downs
+
+-----------------------------------------------------------------------------------------------
+what is lazy evolution in pyspark
+
+Executing the dataflow on demand by performing an action is called as Lazy evolution
+-----------------------------------------------------------------------------------------------
+
+Steps in RDD Computation:
+
+step1 :Initially all the RDD's are declared, they are not stored anywhere
+       we load and execute them on demand by performing an action. this type of evolution
+       is called as Lazy Evolution
+
+step 2: when action is performed, flow execution will start from its root RDD or available RDD
+
+step 3: During flow execution,Each RDD partition will be loaded into RAM of cluster machines
+        and computed at RAM.
+
+step 4:Once RDD computation is completed, it waits for its next RDD of the flow.
+       If next RDD is Ready,previous RDD will be removed from the RAM.
+       This process continues till the action is completed.
+
+step 5: when action is performed, all RDDs are stored one by one and computed at spark side
+        (i.e in spark cluster machines) but the final result which is produced after performing action
+         is stored in client machine,client means the machine from where we are submitting the job.
+
+step 6: During the flow execution, the RDD which is commonly used by many flows will be persisted
+        persiting means making the RDD available in the RAM, so the other flows can reuse the
+        executed transformation
+
+step 7: Finally the RDD stored in RAM will be unpersisted when session is closed
+        or when server shutdowns or forcefully we can unpersist.
+
+
+-----------------------------------------------------------------------------------------------
+Fault Tolerant model in pyspark(while executing the RDDs)
+
+case 1: when the current RDD is down
+
+         (prev)
+         R1----o/p-------i/p---R2(current)
+      p1 p2 p3               p1 p2 p3
+
+ During the execution of current RDD(R2),if anyone of the partition machine is down,
+ then all the current RDD partitions(p1,p2,p3 of R2) will be de-allocated(cleared from RAM)
+ and re-initiated or re-loaded in other slaves by taking i/p from its previous RDD(R1)
+ The 3 partitions are stored in 3 different machines excluding the machine which is down
+-----------------------------------------------------------------------------------------------
+
+case 2: when previous RDD is down
+    (not available)  previous      current
+         R1-----------R2-------------R3
+         s1           s2             s3
+                      down
+
+ During Execution of curent RDD(R3),while taking i/p from R2,if R2 failed then
+ here R2 cant be re-loaded (or) reinitiated in other machines bcoz R2 i/p is R1,which is
+ not available in RAM.so the process should start from the beginning or from persisted RDD
+
+-----------------------------------------------------------------------------------------------
+
+Case 3: If a peristed RDD machine is down
+
+         R1----R2----R3(persisted)----R4-----R5
+         s1    s2    s3               s4     s5
+                     down
+ R3 is stores in s3 and persisted
+ if suddenly s3 is down,
+ then the flow will be re-executed from the available source i.e from persisted RDD or from
+ beginning  till R3 automatically without performing action and R3 will be re-persisted.
+
+ex:2
+
+         R1----R2----R3(persisted)----R4-----R5
+         s1    s2    s3               s4     s5
+                                      down
+
+while executing R5,while taking i/p from R4, if R4 failed then the i/p is taken from
+R3(which is available in RAM) and reloading R4 in another machine and computing and
+provides i/p to R5
+---------------------------------------------------------------------------------------------
+Case 4: when 2 RDD's are persisted
+
+      R1----R2----R3(persisted)----R4-----R5(persisted)------R6
+      s1    s2    s3               s4     s5                 s6
+
+     case i: If R5 machine is down what happens??
+              flow-will be re-executed from R3 to R5 automatically and R5 will be re-persisted
+
+     case ii: IF R3 machine is down,
+              flow will be re-executed from R1 to R3 automatically and R3 will be re-persisted
+
+-----------------------------------------------------------------------------------------------
+Importance of persistence:
+
+R1-R2-R3.................R100
+
+case 1: During computation of R100,
+        if R100 is down then takes i/p from R99 and R100 is loaded into another machine
+        and computed
+
+case 2: During computation of R100,while taking i/p from R99, if R99 is down
+        then R99 cant be loaded bcoz its i/p R98 is not available,so in this case
+        flow starts from the beginning i.e from R1 or from the persisted RDD
+
+        while re-executing from the begining and while computing R93,if R92 down then
+        R91 not in RAM,so again the flow starts from the beginning
+
+        again while re-executing from the begining and while computing R85,if R84 down then
+        R83 not in RAM,so again the flow starts from the beginning
+
+        so here if we persist R80,no need to execute from the beginning
+        but here the while computing R75,if R74 down then again flow starts from the beginning
+        To avoid this , the best way is persist for every 25 RDDS or if memory is good
+        persist for every 10 RDDs i.e R10,R20,R30....R90
+
+
+       once the flow is executed and action is completed you can un-persist all the RDDS
+       R10.unpersist()
+       R20.unpersist()
+
+       R30.unpersist()
+       .
+       .
+
+
+RDD.unpersist()---->unpersist happens immediately on-demand
+
+RDD.persist()----->but persist wont happen immediately, it happens during the flow execution
+
+-----------------------------------------------------------------------------------------------
+Persistence  of a RDD
+---------------------
+Persisting an RDD means---->making the RDD avaialable in the Ram,
+evethough the next RDD is ready and computed also the persisted RDD wont be removed from the
+RAM.
+
+Advantage of persisting RDD:
+IF a RDD is persisted, the other Dataflows can re-use the executed trandformations
+i.e Transformation can be re-used.
+
+Rules in persisting an RDD:
+-------------------------
+1. For persisting an RDD, atleast one flow should be executed
+2. A RDD will be persisted when first time they are loaded and computed
+   even though the persist option is provided in the later steps
+3. The RDD whose output is commonly used by multiple flows, persist that RDD
+4. we need to persist the RDD before action is performed
+
+
+ r1=sc.textFile("hdfsfilepath")
+ r2=r1.map(....)
+ r3=r2.filter(....)
+ r4=r3.flatMap(...)
+ r5=r4.groupByKey(...)
+ ................??? will it be persisted??-------->yes
+ r3.persist()
+ res=r5.collect()
+
+The flow execution is as follows
+R1---->Loaded +computed
+
+R2---->Loaded+computed+Ready
+       now R1 will be removed
+
+R3---->Loaded+computed+persisted immediatedly and ready
+       now R2 will be removed
+R4---->loaded+computed+Ready
+       now R3 is not removed
+R5---->loaded+computed+ready
+       now R4 will be removed
+when action execution is completd then R5 also removed
+Now R3 available in RAM.
+
+r5.collect()
+
+ r5 i/p is r4
+ r4 i/p is r3
+ r3 i/p is r2
+ r2 i/p is r1
+ r1 i/p is file
+
+where ever you specify the persist option,it will be persisted only when it is first time
+loaded and computed
