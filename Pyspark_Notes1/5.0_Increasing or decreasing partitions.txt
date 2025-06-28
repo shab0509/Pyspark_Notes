@@ -1,6 +1,4 @@
-
-
-increasing the number of partitions while parallelizing
+Increasing the number of partitions while parallelizing
 
 >>> x=[10,20,30,40,50,60,70,80]
 >>> r1=sc.parallelize(x)
@@ -53,7 +51,7 @@ can i increase the partitions using coalesce---??--->No
 >>> r4=r2.coalesce(4)
 >>> r4.getNumPartitions()
 2
-using colaesce,we can only decrease but we cannot increase the partitions
+using coalesce,we can only decrease but we cannot increase the partitions
 
 hadoop@ubuntu:~$ hdfs dfs -ls /pyspark630pm/res3
 Found 2 items

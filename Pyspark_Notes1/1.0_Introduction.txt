@@ -10,18 +10,16 @@ Pyspark:
 5.Pyspark features
 6.Real-life usage of Pyspark
 
-
-
 ------------------
 what is Apache Spark
 ------------------
 
 -Spark was developed by Matei Zaharia in AMP lab, Berkeley in the year 2009
--Spark was made opensourced in the year 2010
+-Spark was made open sourced in the year 2010
 -Spark was donated to Apache Software Foundation in the year 2013
 
 Apache Spark is an open-source unified analytics engine used for large-scale data processing,
-hereafter referred it as Spark. Spark is designed to be fast, flexible, and easy to use,
+here after referred it as Spark. Spark is designed to be fast, flexible, and easy to use,
 making it a popular choice for processing large-scale data sets.
 Spark runs operations on billions and trillions of data on
 distributed clusters 100 times faster than traditional applications.

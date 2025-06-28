@@ -24,8 +24,7 @@ i)Transformations
 ii)Actions
 
 Transformation on a RDD------>result is also a RDD(spark object)
-here the Transformation can be--->filtering,transforming,merging,grouping,sorting
-
+    Transformation can be--->filtering,transforming,merging,grouping,sorting
 Action on a RDD-------------->results  a Local object(python object)
 
 1)Transformations :3 types
@@ -89,7 +88,7 @@ when action is performed only-->one by one RDD will be loaded and computed and t
 ----------------------------------------------------------------------------------------------
 3 ways to unpersist an RDD
 
-1)Forcefully unpersisting by saying  RDD.unpersist()
+1)Forcefully unpersisting by saying RDD.unpersist()
 2)when session is closed
 3)when server shut downs
 
@@ -98,34 +97,31 @@ what is lazy evolution in pyspark
 
 Executing the dataflow on demand by performing an action is called as Lazy evolution
 -----------------------------------------------------------------------------------------------
-
 Steps in RDD Computation:
 
-step1 :Initially all the RDD's are declared, they are not stored anywhere
+Step1 :Initially all the RDD's are declared, they are not stored anywhere
        we load and execute them on demand by performing an action. this type of evolution
        is called as Lazy Evolution
 
-step 2: when action is performed, flow execution will start from its root RDD or available RDD
+Step 2: when action is performed, flow execution will start from its root RDD or available RDD
 
-step 3: During flow execution,Each RDD partition will be loaded into RAM of cluster machines
+Step 3: During flow execution,Each RDD partition will be loaded into RAM of cluster machines
         and computed at RAM.
 
-step 4:Once RDD computation is completed, it waits for its next RDD of the flow.
+Step 4:Once RDD computation is completed, it waits for its next RDD of the flow.
        If next RDD is Ready,previous RDD will be removed from the RAM.
        This process continues till the action is completed.
 
-step 5: when action is performed, all RDDs are stored one by one and computed at spark side
+Step 5: when action is performed, all RDDs are stored one by one and computed at spark side
         (i.e in spark cluster machines) but the final result which is produced after performing action
-         is stored in client machine,client means the machine from where we are submitting the job.
+        is stored in client machine,client means the machine from where we are submitting the job.
 
-step 6: During the flow execution, the RDD which is commonly used by many flows will be persisted
-        persiting means making the RDD available in the RAM, so the other flows can reuse the
+Step 6: During the flow execution, the RDD which is commonly used by many flows will be persisted
+        persisting means making the RDD available in the RAM, so the other flows can reuse the
         executed transformation
 
-step 7: Finally the RDD stored in RAM will be unpersisted when session is closed
+Step 7: Finally the RDD stored in RAM will be unpersisted when session is closed
         or when server shutdowns or forcefully we can unpersist.
-
-
 -----------------------------------------------------------------------------------------------
 Fault Tolerant model in pyspark(while executing the RDDs)
 
@@ -226,20 +222,19 @@ RDD.persist()----->but persist wont happen immediately, it happens during the fl
 Persistence  of a RDD
 ---------------------
 Persisting an RDD means---->making the RDD avaialable in the Ram,
-evethough the next RDD is ready and computed also the persisted RDD wont be removed from the
-RAM.
+even though the next RDD is ready and computed also the persisted RDD won't be removed from the RAM.
 
 Advantage of persisting RDD:
-IF a RDD is persisted, the other Dataflows can re-use the executed trandformations
+IF a RDD is persisted, the other Dataflows can re-use the executed trandformations.
 i.e Transformation can be re-used.
 
 Rules in persisting an RDD:
 -------------------------
-1. For persisting an RDD, atleast one flow should be executed
+1. For persisting an RDD, atleast one flow should be executed.
 2. A RDD will be persisted when first time they are loaded and computed
-   even though the persist option is provided in the later steps
-3. The RDD whose output is commonly used by multiple flows, persist that RDD
-4. we need to persist the RDD before action is performed
+   even though the persist option is provided in the later steps.
+3. The RDD whose output is commonly used by multiple flows, persist that RDD.
+4. we need to persist the RDD before action is performed.
 
 
  r1=sc.textFile("hdfsfilepath")
