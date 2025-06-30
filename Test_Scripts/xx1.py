@@ -5,6 +5,7 @@ from importlib.resources import files
 # Create a SparkSession
 sc = SparkSession.builder \
     .appName("BasicPySparkApp") \
+    .config("spark.driver.bindAddress", "localhost") \
     .getOrCreate()
 
 data1=[10,20,30,40,50]
