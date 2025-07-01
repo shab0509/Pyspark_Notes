@@ -1,6 +1,5 @@
 Pyspark Functions:
 ------------------
-
 Column Transformations
 1)withColumn()
   we can perform the following
@@ -28,7 +27,7 @@ iii)Deriving new column from the existing column
 +-----+-------+------+----------+---+----+
 
 
-i)Changing the colun datatype
+i)Changing the column datatype
   for changing the datatype,we use cast() function along with withColumn()
 
 >>> df.printSchema()

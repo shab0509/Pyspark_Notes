@@ -1,7 +1,5 @@
-
-
 Replacing column values within a DataFrame
-
+--------------------------------------------
 1)regexp_replace()
 
 operations:
@@ -13,8 +11,8 @@ iii)replacing values from a python dictionary
 1)Replacing string column values
 
 >>> address=[(1,"24 beach Rd","chennai"),
-...          (2,"308 Gandhi st","BAN"),
-...          (3,"Temple Rd","HYD")]
+             (2,"308 Gandhi st","BAN"),
+             (3,"Temple Rd","HYD")]
 >>> df=spark.createDataFrame(address,["id","addr","city"])
 >>> df.show()
 +---+-------------+-------+
