@@ -1,6 +1,4 @@
-
-
-working with CSV(Comma Seperated Values)
+Working with CSV(Comma Seperated Values)
 ----------------------------------------
 
 hadoop@ubuntu:~$ cat emp1.csv
@@ -13,7 +11,7 @@ eid,ename,sal,sex,dno,city
 hadoop@ubuntu:~$ hdfs dfs -put emp1.csv /pyspark630pm
 
 I-method
---------
+----------------------------------------
 >>> df=spark.read.format("csv").load("hdfs://localhost:9000/pyspark630pm/emp1.csv")
 >>> df.show()  
 +---+------+-----+---+---+----+
@@ -28,8 +26,7 @@ I-method
 +---+------+-----+---+---+----+
 
 II-method:
-----------
-
+----------------------------------------
 >>> df=spark.read.csv("hdfs://localhost:9000/pyspark630pm/emp1.csv")
 >>> df.show()
 +---+------+-----+---+---+----+

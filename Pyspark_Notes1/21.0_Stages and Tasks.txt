@@ -6,26 +6,18 @@ Spark Features:
 
 1.In-memory Computing---->Data loads in memory
                           Data processed in memory
-
-2.LAzy Evolution------>Transformations are executed only when actions are performed
-
+2.Lazy Evolution------>Transformations are executed only when actions are performed
 3.Distributed Execution
-
 4.Parallel Processing
-
 5.Resilience--->During Fault-Tolerance ,Spark has a feature of regenerating the lost partitions
                 of a RDD
-
 6.Persistence-->Making the RDD available in RAM
-
 7.Stages and Tasks
-
 -----------------------------------------------------------------------------------------------
 
 2 Types of Transformations:
 
 1.Narrow Transformation-------->No Shuffling of data involved
-
 2.Wide Transformation --------->Shuffling of data involved
 
 ---------------------------------------------------------------------------------------------
@@ -61,10 +53,7 @@ for running the Application in slave nodes such as
 These resources are allocated by NodeMAnager of each node
 
 RM---->Maintains the entire cluster
-
-NM --->MAintains the entire Node
-
-
+NM --->Maintains the entire Node
 
 SparkApplication----submitted to RM
 
@@ -75,12 +64,9 @@ SparkApplication----submitted to RM
                                      partition1 partition2 PArtition3
 
 
-All the NodeMAnagers will be under the RM
-
+All the NodeManagers will be under the RM
 Blocks are stored in Datanodes
-
 from Blocks partitions are created by allocating the resources by NM
-
 Generally Partitions need to be processed with a B.L
 
 we perform opertions over the partitions or data

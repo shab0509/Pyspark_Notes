@@ -1,4 +1,3 @@
-
 Pyspark Functions:
 ------------------
 
@@ -8,8 +7,8 @@ Column Transformations
   i)for changing the column datatype
  ii)for modifying or updating column value
 iii)Deriving new column from the existing column
-iv)Renaming a column
- V)dropping a dataframe column
+ iv)Renaming a column
+  v)dropping a dataframe column
 
 >>> data=[(101,'Miller',50000,'2020-02-21','M','pune'),
        (102,'Blake',60000,'2019-04-15','M','hyd'),

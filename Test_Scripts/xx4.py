@@ -8,7 +8,6 @@ spark = SparkSession \
         .getOrCreate()
 
 
-
 r1= spark.read.text( "/Users/shabivictor/Shabi_Personal/GITHUB/Pyspark_Notes/Data_Files/emp.txt")
 r1.show()
 r2 = r1.map(lambda x: x.split(","))

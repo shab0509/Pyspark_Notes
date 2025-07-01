@@ -1,6 +1,4 @@
-
-
-workinng with sql queries:
+Working with sql queries:
 -------------------------
 
 for working with sql queries,Register Dataframe as table and then we can

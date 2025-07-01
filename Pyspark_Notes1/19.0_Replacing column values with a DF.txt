@@ -5,10 +5,10 @@ Replacing column values within a DataFrame
 1)regexp_replace()
 
 operations:
-i)for replacing a portion of  a string with another string
-ii)replacing values conditionally
+  i)for replacing a portion of a string with another string
+ ii)replacing values conditionally
 iii)replacing values from a python dictionary
-iv)replace column value from another DataFrame
+ iv)replace column value from another DataFrame
 
 1)Replacing string column values
 

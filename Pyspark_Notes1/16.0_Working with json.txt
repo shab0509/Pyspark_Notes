@@ -1,7 +1,5 @@
-
-
 Reading JSON and writing into JSON
-
+-----------------------------------------------------------------------------------
 hadoop@ubuntu:~$ cat json1
 {"name":"Blake","age":25,"sex":"m"}
 {"name":"Ramya","age":27,"sex":"f"}

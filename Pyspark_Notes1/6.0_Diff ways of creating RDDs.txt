@@ -1,5 +1,5 @@
 Different ways of creating RDDs: 3 ways
------------------------------------------------------------
+--------------------------------------------------------
 
 1.If we parallelize a python object---->then RDD is created
   r1=sc.parallelize(x)

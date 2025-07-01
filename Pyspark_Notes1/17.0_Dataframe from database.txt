@@ -54,8 +54,8 @@ Now reading this emp table from mysql and creating a DF
 ...  .option("url","jdbc:mysql://localhost/sparkdb1") \
 ...  .option("driver","com.mysql.jdbc.Driver") \
 ...  .option("dbtable","emp") \
-... .option("user","hadoop") \
-... .option("password","hadoop").load()
+...  .option("user","hadoop") \
+...  .option("password","hadoop").load()
 
 >>>df.show()
 +---+------+-----+---+---+
