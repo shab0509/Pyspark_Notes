@@ -5,30 +5,29 @@ Spark SQL:
 -on top of RDDs,Dataframes are introduced.
 -RDDs need to be converted as Dataframes and these Dataframes should be registered as tables
  to execute sql stmts
--Dataframes are equivalent to temporatry tables of sql
+-Dataframes are equivalent to temporary tables of sql
 -Spark sql follows Mysql standard sql.
 -Spark Core provides spark context object.
 -Spark sql provides SqlContext object to perform sql operations and RDD operations
 
 -Spark Sql has a sub-component called sparkhql,wich provides a context object
  called hive context object,using this spark can be integrated with hive,so that from
- spark itself we can perform hql operations with in-memory conputing 
+ spark itself we can perform hql operations with in-memory computing
 
- Operations on  a RDD ----->sparkcontext
- operations on  a DF  ----->SqlContext
- operations on hive tables->HiveContext
+ Operations on  a RDD -----> sparkcontext
+ operations on  a DF  -----> SqlContext
+ operations on hive tables-> HiveContext
 
 ----------------------------------------------------------------------------------------------
 DataFrame is a collection of Row objects,each Row object represents a record
 DF provides operations to SQL queries which is not present in RDD.
 Creating DataFrames:
 
-DF can be created in 4ways:
-
+DF can be created in 4 ways:
 1)from RDDs
 2)from local objects(python objects)
 3)from results of queries
-4)from External Datasources
+4)from External Data Sources
 
 -----------------------------------------------------------------------------------------------
 1)Creating Dataframes from RDDs ------------>RDD.toDF
@@ -40,16 +39,16 @@ spark.createDataFrame(List/RDD,schema)
 2nd parameter ----->Column names
 
 we can create DataFrame using
-1)spark session ==>ex: df=spark.createDatFrame(RDD) #here spark is the spark session object
-2)sqlContext    ==>ex: df=sqlContext.createDataFrame(RDD) #using sqlContext
+1)spark session ==> ex: df=spark.createDatFrame(RDD) #here spark is the spark session object
+2)sqlContext    ==> ex: df=sqlContext.createDataFrame(RDD) #using sqlContext
 
 -----------------------------------------------------------------------------------------------
-Four Different ways of Providing Schema
+Four Different ways of Providing Schema:
 
-1.while creating DF,providing schema
-2.using dictionary
-3.using Row object
-4.using StructType
+1.While creating DF,providing schema
+2.Using dictionary
+3.Using Row object
+4.Using StructType
 
 -----------------------------------------------------------------------------------------------
 
@@ -147,7 +146,6 @@ Adding schema to a RDD
 
 -----------------------------------------------------------------------------------------------
 7)Creating a DF using Row object
-
 
 >>> x=[('Miller',25),('Ajay',30),('Blake',45)]
 >>> rdd=sc.parallelize(x)
@@ -275,84 +273,3 @@ hadoop@ubuntu:~$ hdfs dfs -cat /pyspark630pm/emp1.txt
 | 12|104|  Sita|40000|  f|
 | 13|105| James|50000|  m|
 +---+---+------+-----+---+
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

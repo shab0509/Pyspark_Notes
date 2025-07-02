@@ -199,7 +199,7 @@ root
 +-------+------------------+------------------+-----+------------------+----+
 
 ----------------------------------------------------------------------------------------------
-11)distinct() :returns a new DF containg distinct rows
+11)distinct() :returns a new DF containing distinct rows
 
 ex:
 I want to know the number of deptnos
@@ -735,7 +735,7 @@ hadoop@ubuntu:~$ hdfs dfs -cat /pyspark630pm/dept1
 [Row(dno=11, eid=101, ename=u'aaa', sal=1000, sex=u'm'), Row(dno=12, eid=102, ename=u'bbb', sal=2000, sex=u'f'), Row(dno=12, eid=103, ename=u'ccc', sal=3000, sex=u'm'), Row(dno=13, eid=104, ename=u'ddd', sal=4000, sex=u'f'), Row(dno=11, eid=105, ename=u'eee', sal=5000, sex=u'm'), Row(dno=14, eid=106, ename=u'fff', sal=6000, sex=u'f'), Row(dno=15, eid=107, ename=u'ggg', sal=7000, sex=u'm'), Row(dno=16, eid=108, ename=u'hhh', sal=8000, sex=u'f')]
 >>> df1=spark.createDataFrame(r3)
 2024-02-10 06:12:05 WARN  ObjectStore:568 - Failed to get database global_temp, returning NoSuchObjectException
->>> df1.show()te
+>>> df1.show()
 +---+---+-----+----+---+
 |dno|eid|ename| sal|sex|
 +---+---+-----+----+---+

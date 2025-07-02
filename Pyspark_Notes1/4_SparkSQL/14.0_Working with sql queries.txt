@@ -1,7 +1,7 @@
 Working with sql queries:
 -------------------------
 
-for working with sql queries,Register Dataframe as table and then we can
+For working with sql queries,Register Dataframe as table and then we can
 perform all valid sql queries on it
 
 To Register DF as a table---->we have 2 ways

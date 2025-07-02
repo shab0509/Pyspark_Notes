@@ -1,8 +1,5 @@
-1,f,Alice, 28, USA, Engineer
-2,m,Bob, 35, USA, Analyst
-3,m,Carlos, 30, Mexico, Engineer
-4,m,Diana, 27, Germany, Designer
-5,m,Ethan, 40, India, Manager
-6,f,Seeta, 30, Mexico, Engineer
-7,m,Evaan, 27, Germany, Designer
-8,m,Elliot, 40, India, Manager
+101,Miller,10000,m,11
+102,Blake,20000,m,12
+103,Sony,30000,f,11
+104,Sita,40000,f,12
+105,James,50000,m,13

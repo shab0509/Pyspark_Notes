@@ -17,7 +17,7 @@ Apache Spark Index:
 
 2. Spark SQL
       Spark SQL
-      Catalyst Optimizer
+      Catalyst Optimizer Tungsten Engine
       Integration with Hive
 
 3. Spark Streaming
