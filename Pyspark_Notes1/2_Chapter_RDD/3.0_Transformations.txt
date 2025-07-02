@@ -17,6 +17,7 @@ o/p:
 [10,20,30,40,50]
 
 Various in-built Transformations:
+------------------------------------------------------------
 1.map()
 2.flatMap()
 3.filter()
@@ -164,9 +165,9 @@ applying multiple Transformations----->distinct and filter
 [40, 30]
 
 
-----------------------------------------------------------------------------------------------
-Transformations on a pair RDDs i.e (k,v) pairs
 
+Transformations on a pair RDDs i.e (k,v) pairs
+------------------------------------------------------------
 1.reduceByKey()
 2.groupByKey()
 3.sortByKey()

@@ -1,18 +1,16 @@
-#Lecture 1 
 ------------------
 Pyspark:
 ------------------
 
-1.what is Apache Spark
-2.Why Pyspark
-3.Need for Pyspark
-4.Spark Python Vs Scala
-5.Pyspark features
-6.Real-life usage of Pyspark
+1. What is Apache Spark
+2. Pyspark features
+3. Real-life usage of Pyspark
+4. Execution Engine Generations in Spark
+5. Why Pyspark
 
-------------------
-what is Apache Spark
-------------------
+------------------------------------
+1. what is Apache Spark
+------------------------------------
 
 -Spark was developed by Matei Zaharia in AMP lab, Berkeley in the year 2009
 -Spark was made open sourced in the year 2010
@@ -41,9 +39,31 @@ It is a -open source
 spark---->scala
 pyspark-->python
 
-------------------
-Features of Apache Spark
-------------------
+Spark can be coded with Scala (default)/Python/java/R
+
+Pyspark is mainly designed for:
+                  i)Batch Applications --->user non-interactive Applications
+                 ii)Iterative Algorithms
+                iii)Interactive queries
+                 iv)Streaming
+
+MapReduce VS Spark
+-----------------------------------------------------------------------------------------------
+MapReduce Drawbacks:
+1.Transformations cannot be re-used
+2.Bad for Iterative Algorithms
+3.Not a flexible parallel process
+4.Slow Processing
+
+-----------------------------------------------------------------------------------------------
+Spark Vs PiG
+-Both are Dataflow Languages
+-But in PIG, the entire Dataflow is converted into 1 MR job, but again MR is bad
+
+
+------------------------------------
+2. Pyspark Features
+------------------------------------
 1. Python API: Provides a Python API for interacting with Spark,
                enabling Python developers to leverage Spark’s distributed computing capabilities.
 2. Distributed Computing: PySpark utilizes Spark’s distributed computing framework to process
@@ -65,9 +85,9 @@ Features of Apache Spark
 10. Multi-Language support ----> Python,Scala,Java,R
 11. Good For Iterative Algorithms
 
-------------------
+-------------
 Cluster Managers
-------------------
+-------------
 Cluster managers in PySpark are responsible for resource allocation and task scheduling across nodes in a distributed computing environment.
 Here’s a brief overview of the different types:
 
@@ -110,24 +130,20 @@ before spark 1.6 < flink
 spark 1.6onwards ~ flink
 spark 2          > flink
 
-------------------
-Real life usage of Pyspark:
-------------------
+------------------------------------
+3. Real life usage of Pyspark:
+------------------------------------
 1. Commercial sector
 2. Health care
 3. Entertainment Industry
 4. Trading and E-commerce
 5. Tourism Industry
 
------------------------------------------------------------------------------------------------
-Spark can be coded with
-         -Scala (default)
-         -Python
-         -Java
-         -R
 
------------------------------------------------------------------------------------------------
-Execution Generations
+
+------------------------------------
+4. Execution Generations in Spark
+------------------------------------
 
 1)MapReduce
 2)Tej
@@ -144,36 +160,15 @@ HANA Vs Spark --------> Both follows in-memory computation
                         But Spark is distributed RAM
 
 -----------------------------------------------------------------------------------------------
-
 for Huge Storage------------->Hadoop
 for fast processing---------->pyspark
-                            combinely both can store and process huge data
+                              Combinely both can store and process huge data
 
 
------------------------------------------------------------------------------------------------
-Pyspark is mainly designed for
-                  i)Batch Applications --->user non-interactive Applications
-                 ii)Iterative Algorithms
-                iii)Interactive queries
-                 iv)Streaming
+------------------------------------
+5. Why Pyspark
+------------------------------------
 
------------------------------------------------------------------------------------------------
-MapReduce VS Spark
-
-MapReduce Drawbacks:
-1.Transformations cannot be re-used
-2.Bad for Iterative Algorithms
-3.Not a flexible parallel process
-4.Slow Processing
-
------------------------------------------------------------------------------------------------
-Spark Vs PiG
--Both are Dataflow Languages
--But in PIG, the entire Dataflow is converted into 1 MR job, but again MR is bad
-------------------------------------------------------------------------------------------------
-
-
------------------------------------------------------------------------------------------------
 Yahoo---->Table---->100TB------->1024 columns
 Task---->sorting---->16cols
 
@@ -188,9 +183,9 @@ Timetaken
               
 Spark----->100 times faster than hadoop(mapReduce)
 
-------------------
+
 Motivation towards Spark
-------------------
+------------
 spark sorted 100TB data using 206 nodes in 23 minutes
 previous world record was 72 minutes set by Hadoop MR cluster using 2100nodes
 

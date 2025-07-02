@@ -1,0 +1,55 @@
+Apache Spark Index:
+
+1. Core Concepts and Architecture
+      Spark Core
+      RDDs (Resilient Distributed Datasets)
+      DataFrames and Datasets
+      Lazy Evaluation
+      Fault Tolerance (Resilience)
+      Caching and Persistence
+      Shuffling
+      Transformations and Actions
+      Joins in Spark
+      Window functions and aggregations
+      Repartition & Coalesce
+      Salting (Data Skewness)
+      Working with Different File Format
+
+2. Spark SQL
+      Spark SQL
+      Catalyst Optimizer
+      Integration with Hive
+
+3. Spark Streaming
+      DStreams
+      Micro-batching
+      Output Modes
+      Caching in Spark Streaming
+
+4. Optimization Techniques
+      Partitioning and Coalescing
+      Broadcast Variables
+      Data Skew
+
+5. Integration and Deployment
+      Integration with other systems: Hadoop, Cassandra, etc.
+      Cluster Managers:   (e.g., YARN,Mesos,Standalone,Kubernetes).
+      Deployment Modes: Client vs. cluster mode.
+
+6. Machine Learning
+      MLlib: Spark's machine learning library.
+
+7. GraphX
+      Spark's API for graph processing.
+
+7. Real-World Scenarios:
+      Out-of-memory errors: How to handle them.
+      Tuning a Spark job: Identifying bottlenecks and optimizing performance.
+      Real-time data processing: Using Spark Streaming for various applications.
+      Broadcast variables and accumulators
+
+8. General Knowledge:
+      Spark vs MapReduce: Key differences and advantages.
+      PySpark: Understanding its advantages and how it differs from other languages.
+      General interview questions: Tell me about yourself, why Spark, strengths/weaknesses, etc.
+

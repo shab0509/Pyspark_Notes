@@ -1,5 +1,5 @@
 Spark SQL:
-
+------------------------------------------------------------
 -Spark sql is used to process Spark data objects using SQL stmts
 -Spark data objects are called as RDDs
 -on top of RDDs,Dataframes are introduced.

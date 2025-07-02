@@ -5,7 +5,7 @@
 
 For creating spark application mainly we require driver
 
-Driver--->which controls and drives the entire proram
+Driver--->which controls and drives the entire program
        -->it is a process(JVM)
 
 spark---->implemented in python------>why again JVM required

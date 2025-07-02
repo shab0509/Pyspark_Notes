@@ -16,16 +16,16 @@ RDD(Resilient Distributed Datasets)
 In Spark,Dataflow is executed in sequence i.e RDD by RDD(one after the another)
 with in-memory computation and persistence feature
 
-If  a  RDD has got 30 partitions , then all these 30 partitions can be executed in parallel
+If a RDD has got 30 partitions, then all these 30 partitions can be executed in parallel
 -----------------------------------------------------------------------------------------------
 
-On a RDD , 2 types of operations can be performed
-i)Transformations
+On a RDD , Two types of operations can be performed:
+ i)Transformations
 ii)Actions
 
 Transformation on a RDD------>result is also a RDD(spark object)
-    Transformation can be--->filtering,transforming,merging,grouping,sorting
-Action on a RDD-------------->results  a Local object(python object)
+                Transformation can be--->filtering,transforming,merging,grouping,sorting
+Action on a RDD-------------->results a Local object(python object)
 
 1)Transformations :3 types
   i)Each element Transformation

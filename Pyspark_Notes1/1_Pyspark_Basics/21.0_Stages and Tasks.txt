@@ -27,7 +27,6 @@ when we submit or launch spark application to any cluster then 2 kinds of progra
 will be created
 
 1)Driver -------->acts as master process
-
 2)Executor-------->acts as a slave process
 
 These are master and slave w.r.to Spark Application but not w.r.to spark cluster
