@@ -30,7 +30,6 @@ Various in-built Transformations:
 1.map() :For each element Transformation
 
 Applying operation to each element of a RDD and returns a RDD.
-
 ex: squaring each element of a RDD
 
 >>> r1=sc.parallelize([10,20,30,40,50])
@@ -72,7 +71,6 @@ ex:2 adding 5 to each element of a RDD
 ex:2
 >>> a=["python","Java","Devops","Spark","Scala"]
 >>> #Filter other than Java
-... 
 >>> rdd1=sc.parallelize(a)
 >>> rdd2=rdd1.filter(lambda x:x!="Java")
 >>> res=rdd2.collect()
@@ -320,53 +318,3 @@ join():
 [(10, (20, 25)), (10, (20, 55)), (70, (None, 80)), (50, (60, None)), (30, (40, 45))]
 >>> 
 ----------------------------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

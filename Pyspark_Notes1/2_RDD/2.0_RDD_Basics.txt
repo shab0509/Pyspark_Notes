@@ -24,7 +24,7 @@ On a RDD , Two types of operations can be performed:
 ii)Actions
 
 Transformation on a RDD------>result is also a RDD(spark object)
-                Transformation can be--->filtering,transforming,merging,grouping,sorting
+                Transformation can be--->filtering,merging,grouping,sorting,etc
 Action on a RDD-------------->results a Local object(python object)
 
 1)Transformations :3 types
@@ -102,24 +102,18 @@ Steps in RDD Computation:
 Step1 :Initially all the RDD's are declared, they are not stored anywhere
        we load and execute them on demand by performing an action. this type of evolution
        is called as Lazy Evolution
-
 Step 2: when action is performed, flow execution will start from its root RDD or available RDD
-
 Step 3: During flow execution,Each RDD partition will be loaded into RAM of cluster machines
         and computed at RAM.
-
 Step 4:Once RDD computation is completed, it waits for its next RDD of the flow.
        If next RDD is Ready,previous RDD will be removed from the RAM.
        This process continues till the action is completed.
-
 Step 5: when action is performed, all RDDs are stored one by one and computed at spark side
         (i.e in spark cluster machines) but the final result which is produced after performing action
         is stored in client machine,client means the machine from where we are submitting the job.
-
-Step 6: During the flow execution, the RDD which is commonly used by many flows will be persisted
+Step 6: During the flow execution, the RDD which is commonly used by many flows will be persisted.
         persisting means making the RDD available in the RAM, so the other flows can reuse the
         executed transformation
-
 Step 7: Finally the RDD stored in RAM will be unpersisted when session is closed
         or when server shutdowns or forcefully we can unpersist.
 -----------------------------------------------------------------------------------------------
@@ -213,9 +207,7 @@ case 2: During computation of R100,while taking i/p from R99, if R99 is down
        .
        .
 
-
 RDD.unpersist()---->unpersist happens immediately on-demand
-
 RDD.persist()----->but persist wont happen immediately, it happens during the flow execution
 
 -----------------------------------------------------------------------------------------------
@@ -258,7 +250,7 @@ R4---->loaded+computed+Ready
        now R3 is not removed
 R5---->loaded+computed+ready
        now R4 will be removed
-when action execution is completd then R5 also removed
+when action execution is completed then R5 also removed
 Now R3 available in RAM.
 
 r5.collect()
@@ -269,5 +261,5 @@ r5.collect()
  r2 i/p is r1
  r1 i/p is file
 
-where ever you specify the persist option,it will be persisted only when it is first time
-loaded and computed
+where ever you specify the persist option,
+it will be persisted only when it is first time loaded and computed
